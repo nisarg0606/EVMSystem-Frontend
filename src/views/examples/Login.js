@@ -137,6 +137,7 @@ const Login = () => {
           <div className="shape shape-style-1 bg-gradient-default">
             <iframe
               src="https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/"
+              title="Spline Design"
               frameborder="0"
               width="100%"
               height="100%"
@@ -229,6 +230,12 @@ const Login = () => {
                         </label>
                       </div>
                       <div className="text-center">
+                        <ReCAPTCHA
+                          sitekey={process.env.REACT_APP_SITE_KEY}
+                          onChange={handleRecaptchaChange}
+                        />
+                      </div>
+                      <div className="text-center">
                         {is2FARequired ? (
                           <Button
                             className="my-4 tw-text-black"
@@ -308,10 +315,6 @@ const Login = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      <ReCAPTCHA
-        sitekey="YOUR_RECAPTCHA_SITE_KEY"
-        onChange={handleRecaptchaChange}
-      />
     </>
   );
 };
