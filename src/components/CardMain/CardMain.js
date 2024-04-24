@@ -16,7 +16,8 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
   const token = localStorage.getItem("token");
   const [isMobile, setIsMobile] = useState(false);
   const [venueId, setVenueId] = useState("");
-  
+  const userRole = localStorage.getItem('role')
+
   const fields = [
     { name: "name", label: "Title" },
     { name: "description", label: "Description" },
@@ -193,6 +194,8 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
               </svg>
             </Button>
+            {userRole !== 'customer' && (
+<>
             {token && (
               <>
                 {cardType === 'venue' && (
@@ -232,6 +235,8 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                 )}
               </>
             )}
+            </>
+          )}
 
           </div>
 

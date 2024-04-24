@@ -36,6 +36,7 @@ const Venue = () => {
 
   const [newDay, setNewDay] = useState("");
   const [newSlot, setNewSlot] = useState({ from: "", to: "" });
+  const userRole = localStorage.getItem("role");
 
   useEffect(() => {
     if (newDay) {
@@ -96,7 +97,7 @@ const Venue = () => {
 
     } catch (error) {
       console.error("Error creating venue:", error);
-      toast.error("Failed to Created venue",error);
+      toast.error("Failed to Created venue", error);
 
     } finally {
       setModalLoading(false);
@@ -213,9 +214,11 @@ const Venue = () => {
               <Card className="card-profile shadow mt--300 rounded">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
                   <div className="tw-flex tw-justify-between -tw-items-center">
+                  {userRole !== 'customer' && (
                     <Button onClick={handleCreateVenue} className="mr-2 tw-text-white">
                       Create Venue
                     </Button>
+                  )}
                     <div className="tw-flex items-center">
                       <Input
                         type="text"
@@ -294,157 +297,157 @@ const Venue = () => {
       <Modal isOpen={modal} toggle={toggle} >
         <ModalHeader toggle={toggle} >Create Venue</ModalHeader>
         <ModalBody className="tw-bg-white">
-        {modalLoading ? (
-                                <div className="text-center">
-                                    <p>Loading...</p>
-                                    <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
-                                </div>
-                            ) : (
-          <Form onSubmit={handleSubmit}>
-            <FormGroup>
-              <Label for="name">Name:</Label>
-              <Input
-                type="text"
-                name="name"
-                id="name"
-                value={venueData.name}
-                onChange={handleChange}
-              />
-            </FormGroup>
+          {modalLoading ? (
+            <div className="text-center">
+              <p>Loading...</p>
+              <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+            </div>
+          ) : (
+            <Form onSubmit={handleSubmit}>
+              <FormGroup>
+                <Label for="name">Name:</Label>
+                <Input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={venueData.name}
+                  onChange={handleChange}
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label for="description">Description:</Label>
-              <Input
-                type="textarea"
-                name="description"
-                id="description"
-                value={venueData.description}
-                onChange={handleChange}
-              />
-            </FormGroup>
+              <FormGroup>
+                <Label for="description">Description:</Label>
+                <Input
+                  type="textarea"
+                  name="description"
+                  id="description"
+                  value={venueData.description}
+                  onChange={handleChange}
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label for="capacity">Capacity:</Label>
-              <Input
-                type="number"
-                name="capacity"
-                id="capacity"
-                value={venueData.capacity}
-                onChange={handleChange}
-              />
-            </FormGroup>
+              <FormGroup>
+                <Label for="capacity">Capacity:</Label>
+                <Input
+                  type="number"
+                  name="capacity"
+                  id="capacity"
+                  value={venueData.capacity}
+                  onChange={handleChange}
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label for="location">Location:</Label>
-              <Input
-                type="text"
-                name="location"
-                id="location"
-                value={venueData.location}
-                onChange={handleChange}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="type">Type:</Label>
-              <Input
-                type="text"
-                name="type"
-                id="type"
-                value={venueData.type}
-                onChange={handleChange}
-              />
-            </FormGroup>
+              <FormGroup>
+                <Label for="location">Location:</Label>
+                <Input
+                  type="text"
+                  name="location"
+                  id="location"
+                  value={venueData.location}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="type">Type:</Label>
+                <Input
+                  type="text"
+                  name="type"
+                  id="type"
+                  value={venueData.type}
+                  onChange={handleChange}
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label for="price">Price Per Hour:</Label>
-              <Input
-                type="number"
-                name="price"
-                id="price"
-                value={venueData.price}
-                onChange={handleChange}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="newDay">Select Day:</Label>
-              <Input
-                type="select"
-                name="newDay"
-                id="newDay"
-                value={newDay}
-                onChange={(e) => setNewDay(e.target.value)}
-              >
-                <option value="">Select Day</option>
-                <option value="monday">Monday</option>
-                <option value="tuesday">Tuesday</option>
-                <option value="wednesday">Wednesday</option>
-                <option value="thursday">Thursday</option>
-                <option value="friday">Friday</option>
-                <option value="saturday">Saturday</option>
-                <option value="sunday">Sunday</option>
-              </Input>
-            </FormGroup>
-
-            {venueData.timings.map((day, dayIndex) => (
-              <div key={dayIndex}>
-                <h4>{day.day}</h4>
-                {day.slots.map((slot, slotIndex) => (
-                  <div key={slotIndex}>
-                    <Input
-                      type="text"
-                      value={slot.from}
-                      onChange={(e) => {
-                        const updatedTimings = [...venueData.timings];
-                        updatedTimings[dayIndex].slots[slotIndex].from = e.target.value;
-                        setVenueData({
-                          ...venueData,
-                          timings: updatedTimings,
-                        });
-                      }}
-                      placeholder="From"
-                    />
-                    {" - "}
-                    <Input
-                      type="text"
-                      value={slot.to}
-                      onChange={(e) => {
-                        const updatedTimings = [...venueData.timings];
-                        updatedTimings[dayIndex].slots[slotIndex].to = e.target.value;
-                        setVenueData({
-                          ...venueData,
-                          timings: updatedTimings,
-                        });
-                      }}
-                      placeholder="To"
-                    />
-
-                    <Button color="danger" className='tw-text-black tw-mt-2 mb-2' onClick={() => handleRemoveSlot(dayIndex, slotIndex)}>
-                      Remove Slot
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  color="primary"
-                  className='tw-text-black'
-                  onClick={() => handleAddSlot(dayIndex)}
+              <FormGroup>
+                <Label for="price">Price Per Hour:</Label>
+                <Input
+                  type="number"
+                  name="price"
+                  id="price"
+                  value={venueData.price}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="newDay">Select Day:</Label>
+                <Input
+                  type="select"
+                  name="newDay"
+                  id="newDay"
+                  value={newDay}
+                  onChange={(e) => setNewDay(e.target.value)}
                 >
-                  Add Slot
-                </Button>
-              </div>
-            ))}
-            <FormGroup>
-              <Label for="image">Image:</Label>
-              <Input
-                type="file"
-                name="image"
-                id="image"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </FormGroup>
-          </Form>
-                            )}
+                  <option value="">Select Day</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                  <option value="sunday">Sunday</option>
+                </Input>
+              </FormGroup>
+
+              {venueData.timings.map((day, dayIndex) => (
+                <div key={dayIndex}>
+                  <h4>{day.day}</h4>
+                  {day.slots.map((slot, slotIndex) => (
+                    <div key={slotIndex}>
+                      <Input
+                        type="text"
+                        value={slot.from}
+                        onChange={(e) => {
+                          const updatedTimings = [...venueData.timings];
+                          updatedTimings[dayIndex].slots[slotIndex].from = e.target.value;
+                          setVenueData({
+                            ...venueData,
+                            timings: updatedTimings,
+                          });
+                        }}
+                        placeholder="From"
+                      />
+                      {" - "}
+                      <Input
+                        type="text"
+                        value={slot.to}
+                        onChange={(e) => {
+                          const updatedTimings = [...venueData.timings];
+                          updatedTimings[dayIndex].slots[slotIndex].to = e.target.value;
+                          setVenueData({
+                            ...venueData,
+                            timings: updatedTimings,
+                          });
+                        }}
+                        placeholder="To"
+                      />
+
+                      <Button color="danger" className='tw-text-black tw-mt-2 mb-2' onClick={() => handleRemoveSlot(dayIndex, slotIndex)}>
+                        Remove Slot
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    color="primary"
+                    className='tw-text-black'
+                    onClick={() => handleAddSlot(dayIndex)}
+                  >
+                    Add Slot
+                  </Button>
+                </div>
+              ))}
+              <FormGroup>
+                <Label for="image">Image:</Label>
+                <Input
+                  type="file"
+                  name="image"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </FormGroup>
+            </Form>
+          )}
         </ModalBody>
         <ModalFooter className="tw-bg-gray-200">
           <Button color="tw-primary" onClick={() => handleSubmit(venueData)} className="tw-hover:bg-blue-700 tw-text-black tw-font-bold tw-py-1 tw-px-2 tw-rounded mr-2">Submit</Button>{' '}
