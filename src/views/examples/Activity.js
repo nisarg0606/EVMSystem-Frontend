@@ -14,7 +14,9 @@ import {
     DropdownToggle,
     Dropdown,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    Row,
+    Col
 } from 'reactstrap';
 import CardMain from 'components/CardMain/CardMain';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
@@ -44,9 +46,9 @@ const Activity = () => {
     const [getUpCommingActivities, setUpCommingActivites] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownItems, setDropdownItems] = useState([]);
-    const [venueId, setVenueID] = useState('');
     const [venueName, setVenueName] = useState('');
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const toggle = () => setDropdownOpen(prevState => !prevState);
 
     const [modalLoading, setModalLoading] = useState(false);
@@ -106,6 +108,24 @@ const Activity = () => {
         fetchData();
     }, []);
 
+    const handleSearchButtonClick = async () => {
+        if (searchQuery.trim() !== '') {
+            try {
+                const results = await GetMyActivities(searchQuery);
+                setSearchResults(results);
+            } catch (error) {
+                console.error("Error searching activities:", error.message);
+            }
+        }
+    };
+
+    const handleClearSearch = async () => {
+
+        setSearchQuery('');
+        setSearchResults([]);
+        setCurrentPage(1);
+    };
+
     const handleGetUpcommingActivity = async () => {
         try {
             const activitiesResponse = await GetUpCommingActivites();
@@ -151,7 +171,16 @@ const Activity = () => {
                         <span />
 
                     </div>
+                    <Container className="shape-container d-flex align-items-center py-lg ">
 
+                        <div className="col px-0">
+                            <Row className="align-items-center justify-content-center">
+                                <Col className="tw-mx-auto tw-text-center" lg="10">
+                                    <h1 className="tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-gray-800 tw-my-4">Activity</h1>
+                                </Col>
+                            </Row>
+                        </div>
+                    </Container>
                     {/* SVG separator */}
                     <div className="separator separator-bottom separator-skew">
                         <svg
@@ -184,34 +213,75 @@ const Activity = () => {
                         </div>
                     ) : (
                         <Container>
-                            <Card className="card-profile shadow mt--300">
+                            <Card className="card-profile shadow mt--300 rounded">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
-                                    {userRole !== 'customer' && (
+                                    <div className="tw-flex tw-justify-between -tw-items-center">
+                                        {userRole !== 'customer' && (
 
-                                        <Button onClick={() => { toggleModal(); handleGetUpcommingActivity(); }} className="mr-2 tw-text-black">
-                                            Create Activity
-                                        </Button>
+                                            <Button onClick={() => { toggleModal(); handleGetUpcommingActivity(); }} className="mr-2 tw-text-black">
+                                                Create Activity
+                                            </Button>
 
+                                        )}
+                                        <div className="tw-flex items-center "> 
+                                            <Input
+                                                type="text"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                placeholder="Search by name or description"
+                                                className="tw-mr-2 tw-w-64"
+                                            />
+                                            <Button onClick={handleSearchButtonClick} className="mr-2 tw-text-white">
+                                                Search
+                                            </Button>
+                                            {searchQuery && (
+                                                <Button onClick={handleClearSearch} className="mr-2 tw-text-white">
+                                                    Clear
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <br>
+                                    </br>
+                                    {searchResults.length > 0 ? (
+                                        searchResults.map(activity => (
+                                            <CardMain
+                                                key={activity._id}
+                                                // Assuming other props for activity card
+                                                imageSrc={activity.imageURL}
+                                                title={activity.name}
+                                                description={activity.description}
+                                                venue={activity.venue}
+                                                activityType={activity.type_of_activity}
+                                                date={activity.date}
+                                                start_time={activity.start_time}
+                                                end_time={activity.end_time}
+                                                participantsLimit={activity.participants_limit}
+                                                price={activity.price}
+                                                cardType={'activity'}
+                                                id={activity._id}
+                                            />
+                                        ))
+                                    ) : (
+                                        currentActivities.map(activity => (
+                                            <CardMain
+                                                key={activity._id}
+                                                // Assuming other props for activity card
+                                                imageSrc={activity.imageURL}
+                                                title={activity.name}
+                                                description={activity.description}
+                                                venue={activity.venue}
+                                                activityType={activity.type_of_activity}
+                                                date={activity.date}
+                                                start_time={activity.start_time}
+                                                end_time={activity.end_time}
+                                                participantsLimit={activity.participants_limit}
+                                                price={activity.price}
+                                                cardType={'activity'}
+                                                id={activity._id}
+                                            />
+                                        ))
                                     )}
-                                    <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
-                                    {currentActivities.map((activity) => (
-                                        <CardMain
-                                            key={activity._id}
-                                            // Assuming imagesURL is an array of image URLs
-                                            imageSrc={activity.imageURL}
-                                            title={activity.name}
-                                            description={`${activity.description} Type: ${activity.type_of_activity}`}
-                                            venue={`Venue: ${activity.venue ? activity.venue.name : 'To be announced'}`}
-                                            activityType={`Type of Activity: ${activity.type_of_activity}`}
-                                            date={`Date: ${new Date(activity.date).toLocaleDateString()}`}
-                                            start_time={`Start Time: ${activity.start_time}`}
-                                            end_time={`End Time: ${activity.end_time}`}
-                                            participantsLimit={`Participants Limit: ${activity.participants_limit}`}
-                                            price={`Price: $${activity.price}`}
-                                            cardType={'activity'}
-                                            id={activity._id}
-                                        />
-                                    ))}
                                 </div>
                             </Card>
                             {/* Pagination */}

@@ -2,16 +2,31 @@ const BASE_URL = "http://localhost:5000/";
 const token = localStorage.getItem("token");
 const userRole = localStorage.getItem("role");
 
-const fetchActivities = () => {
-    // Check the user's role
-    if (userRole === "customer") {
-        // If the user is a customer, hit the activities API
-        return fetch(`${BASE_URL}activities`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
+const fetchActivities = (search) => {
+    let url;
+    // Check if search parameter is provided
+    if (search) {
+        url = `${BASE_URL}activities/search?search=${encodeURIComponent(search)}`;
+    } else if (userRole === "customer") {
+        url = `${BASE_URL}activities`;
+    } else {
+        url = `${BASE_URL}activities/myactivities`;
+    }
+
+    // Constructing fetch options
+    const options = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+
+    // Add Authorization header if user is not a customer
+    if (userRole !== "customer") {
+        options.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return fetch(url, options)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch activities: ${response.status}`);
@@ -22,26 +37,6 @@ const fetchActivities = () => {
             console.error("Error fetching activities:", error.message);
             throw error;
         });
-    } else {
-        // If the user is not a customer, hit the myactivities API
-        return fetch(`${BASE_URL}activities/myactivities`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch my activities: ${response.status}`);
-            }
-            return response.json();
-        })
-        .catch(error => {
-            console.error("Error fetching my activities:", error.message);
-            throw error;
-        });
-    }
-}
+};
 
 export default fetchActivities;

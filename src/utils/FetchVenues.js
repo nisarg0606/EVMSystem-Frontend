@@ -2,18 +2,23 @@ const BASE_URL = "http://localhost:5000/";
 const token = localStorage.getItem('token');
 const userRole = localStorage.getItem('role');
 
-const fetchVenues = (name, description) => {
-  const url = new URL(`${BASE_URL}venues`);
-
-  if (name && description) {
-    url.pathname += '/search';
-    url.searchParams.append('name', name);
-    url.searchParams.append('description', description);
+const fetchVenues = (search) => {
+  let url;
+  if (userRole === 'customer') {
+    if (search) {
+      url = new URL(`${BASE_URL}venues/search`);
+      url.searchParams.append('search', search);
+    } else {
+      url = new URL(`${BASE_URL}venues`);
+    }
+  } else {
+    if (search) {
+      url = new URL(`${BASE_URL}venues/myvenues/search`);
+      url.searchParams.append('search', search);
+    } else {
+      url = new URL(`${BASE_URL}venues/myvenues`);
+    }
   }
-
-  // Conditional logic based on userRole
-  const targetPath = (userRole === 'customer') ? '' : '/myvenues';
-  url.pathname += targetPath;
 
   return fetch(url.toString(), {
     method: "GET",
