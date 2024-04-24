@@ -54,7 +54,8 @@ const Venue = () => {
     }
   };
 
-  const handleClearSearch = () => {
+  const handleClearSearch = async () => {
+
     setSearchQuery('');
     setSearchResults([]);
     setCurrentPage(1);
