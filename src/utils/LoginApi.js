@@ -1,5 +1,6 @@
+import Cookies from 'js-cookie';
 
-const BASE_URL = "http://localhost:5000/"; 
+const BASE_URL = "http://localhost:5000/";
 
 const loginApi = async (credentials) => {
   try {
@@ -16,7 +17,12 @@ const loginApi = async (credentials) => {
     }
 
     const data = await response.json();
-    localStorage.setItem("token",data.user.token)
+    const token = data.user.token;
+
+    // Set the token as a cookie with a 1-day expiration
+    Cookies.set('token', token, { expires: 1 });
+    localStorage.setItem('token', token)
+
     return data;
   } catch (error) {
     console.log("Error logging in:", error.message);

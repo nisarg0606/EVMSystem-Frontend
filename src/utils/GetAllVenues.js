@@ -1,13 +1,13 @@
 const BASE_URL = "http://localhost:5000/";
 
-const GetAllActivites = () => {
+const GetAllVeniues = () => {
     const token = localStorage.getItem("token");
     
     if (!token) {
         throw new Error("Token not found in local storage.");
     }
 
-    return fetch(`${BASE_URL}activities/`, {
+    return fetch(`${BASE_URL}venues/`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -16,14 +16,14 @@ const GetAllActivites = () => {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Failed to fetch activities: ${response.status}`);
+            throw new Error(`Failed to fetch venues: ${response.status}`);
         }
         return response.json();
     })
     .catch(error => {
-        console.error("Error fetching activities:", error.message);
+        console.error("Error fetching venues:", error.message);
         throw error;
     });
 }
 
-export default GetAllActivites ;
+export default GetAllVeniues ;
