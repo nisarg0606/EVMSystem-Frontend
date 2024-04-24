@@ -25,7 +25,7 @@ const Home = () => {
             <main className="profile-page">
                 <section className="section-profile-cover section-shaped my-0">
                     {/* Circles background */}
-                    {/* <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe> */}
+                    <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
 
                     <div className="shape shape-style-1 shape-default alpha-4">
                         <span />

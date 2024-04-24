@@ -162,7 +162,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
               <div className="tw-flex tw-justify-between tw-items-center">
                 {cardType === 'venue' && (
                   <>
-                    {userRole !== 'customer' && (
+                    {userRole !== 'customer' && token && (
                       <>
 
                         <Button

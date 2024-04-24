@@ -1,3 +1,4 @@
+import DemoNavbar from "components/Navbars/DemoNavbar";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -53,82 +54,97 @@ const Login = () => {
 
   return (
     <>
-      <section className="section section-lg section-shaped">
-        <Container className="py-md">
-          <Row className="row-grid justify-content-between align-items-center">
-            <Col lg="6">
-              {/* Your existing content */}
-            </Col>
-            <Col className="mb-lg-auto" lg="5">
-              <Card className="bg-secondary shadow border-0">
-                <CardHeader className="bg-white pb-5">
-                  {/* Your existing content */}
-                </CardHeader>
-                <CardBody className="px-lg-5 py-lg-5">
-                  <Form role="form">
-                    <FormGroup className="mb-3">
-                      <InputGroup className="input-group-alternative">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>
-                            <i className="ni ni-email-83" />
-                          </InputGroupText>
-                        </InputGroupAddon>
-                        <Input
-                          placeholder="Email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+      <DemoNavbar />
+      <main>
+        <section className="section section-shaped section-lg">
+        <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+
+          <div className="shape shape-style-1 bg-gradient-default">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <Container className="py-md">
+            <Row className="row-grid justify-content-between align-items-center">
+              <Col lg="6">
+                {/* Your existing content */}
+              </Col>
+              <Col className="mb-lg-auto" lg="5">
+                <Card className="bg-secondary shadow border-0">
+                  <CardHeader className="bg-white pb-5">
+                    {/* Your existing content */}
+                  </CardHeader>
+                  <CardBody className="px-lg-5 py-lg-5">
+                    <Form role="form">
+                      <FormGroup className="mb-3">
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-email-83" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input
+                            placeholder="Email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <FormGroup>
+                        <InputGroup className="input-group-alternative">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-lock-circle-open" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input
+                            placeholder="Password"
+                            type="password"
+                            autoComplete="off"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                      <div className="custom-control custom-control-alternative custom-checkbox">
+                        <input
+                          className="custom-control-input"
+                          id="customCheckLogin2"
+                          type="checkbox"
                         />
-                      </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                      <InputGroup className="input-group-alternative">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>
-                            <i className="ni ni-lock-circle-open" />
-                          </InputGroupText>
-                        </InputGroupAddon>
-                        <Input
-                          placeholder="Password"
-                          type="password"
-                          autoComplete="off"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                      </InputGroup>
-                    </FormGroup>
-                    <div className="custom-control custom-control-alternative custom-checkbox">
-                      <input
-                        className="custom-control-input"
-                        id="customCheckLogin2"
-                        type="checkbox"
-                      />
-                      <label
-                        className="custom-control-label"
-                        htmlFor="customCheckLogin2"
-                      >
-                        <span>Remember me</span>
-                      </label>
-                    </div>
-                    <div className="text-center">
-                      <Button
-                        className="my-4"
-                        color="primary"
-                        onClick={handleSubmit} // Call handleSubmit on button click
-                      >
-                        Sign in
-                      </Button>
-                    </div>
-                  </Form>
-                  {error && (
-                    <div className="text-center text-danger mt-3">{error}</div>
-                  )}
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
+                        <label
+                          className="custom-control-label"
+                          htmlFor="customCheckLogin2"
+                        >
+                          <span>Remember me</span>
+                        </label>
+                      </div>
+                      <div className="text-center">
+                        <Button
+                          className="my-4"
+                          color="primary"
+                          onClick={handleSubmit}
+                        >
+                          Sign in
+                        </Button>
+                      </div>
+                    </Form>
+                    {error && (
+                      <div className="text-center text-danger mt-3">{error}</div>
+                    )}
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+      </Container>
       </section>
+    </main >
     </>
   );
 };

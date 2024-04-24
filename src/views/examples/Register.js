@@ -8,8 +8,8 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState(""); 
-  const [lastName, setLastName] = useState(""); 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -27,7 +27,7 @@ const Register = () => {
         lastName: lastName,
         role: isAdmin ? "venueOwner/eventPlanner" : "customer"
       };
-  
+
       const Response = await RegisterApi(userData);
       if (Response) {
         setSuccess(true);
@@ -41,12 +41,14 @@ const Register = () => {
     }
     setLoading(false);
   };
-  
-  {success && (
-    <div className="text-success text-center">
-      Registration successful. You can now <Link to="/page-login">login</Link>.
-    </div>
-  )}
+
+  {
+    success && (
+      <div className="text-success text-center">
+        Registration successful. You can now <Link to="/page-login">login</Link>.
+      </div>
+    )
+  }
 
   return (
     <>
@@ -62,7 +64,7 @@ const Register = () => {
             <span />
             <span />
             <span />
-            {/* <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>  */}
+            <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
 
           </div>          <Container className="pt-lg-7">
             <Row className="justify-content-center">
