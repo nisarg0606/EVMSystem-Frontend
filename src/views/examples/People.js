@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Card, Container, ListGroup, ListGroupItem, Pagination, PaginationItem, PaginationLink, Row, Col, Spinner
+    Card, Container, ListGroup, ListGroupItem, Pagination, PaginationItem, PaginationLink, Row, Col, Spinner, Input, InputGroup, InputGroupAddon, InputGroupText
 } from 'reactstrap';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
 import SimpleFooter from 'components/Footers/SimpleFooter';
@@ -13,6 +13,7 @@ const People = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(7);
     const [loading, setLoading] = useState(true); // State variable for loading
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         setLoading(true); // Start loading
@@ -36,6 +37,19 @@ const People = () => {
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset pagination when searching
+    };
+
+    const filteredUsers = users.filter(user => {
+        const usernameMatch = user.username.toLowerCase().includes(searchTerm.toLowerCase());
+        const interestsMatch = user.interestedIn.some(interest => interest.toLowerCase().includes(searchTerm.toLowerCase()));
+        return usernameMatch || interestsMatch;
+    });
+
+    const renderUsers = filteredUsers.length > 0 ? filteredUsers : currentUsers;
 
     return (
         <>
@@ -79,6 +93,12 @@ const People = () => {
                         <Card className="card-profile shadow mt--300 rounded">
                             <div className="tw-p-4 tw-bg-gray-100">
                                 <h1 className="tw-text-2xl tw-mb-4 tw-font-bold">User List</h1>
+                                <InputGroup className="tw-mb-4">
+                                    <InputGroupAddon addonType="prepend">
+                                        <InputGroupText>Search</InputGroupText>
+                                    </InputGroupAddon>
+                                    <Input type="text" placeholder="Search by username or interest..." value={searchTerm} onChange={handleSearch} />
+                                </InputGroup>
                                 {loading ? (
                                     // Display the spinner while loading
                                     <div className="tw-flex tw-justify-center tw-my-4">
@@ -93,13 +113,13 @@ const People = () => {
                                             Loading...
                                         </Spinner>
                                     </div>
-                                ) : users.length === 0 ? (
+                                ) : renderUsers.length === 0 ? (
                                     // Display a message if the user list is empty
                                     <p>No users to display</p>
                                 ) : (
                                     // Display the list of current page users
                                     <ListGroup>
-                                        {currentUsers.map(user => (
+                                        {renderUsers.map(user => (
                                             <ListGroupItem key={user.id} className="tw-mb-2">
                                                 <div className="tw-flex tw-flex-col tw-bg-white tw-p-4 tw-shadow-md">
                                                     <p className="tw-font-semibold">Username: {user.username}</p>
@@ -119,7 +139,6 @@ const People = () => {
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))}
-
                                 </Pagination>
                             </div>
                         </Card>
