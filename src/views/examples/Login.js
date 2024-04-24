@@ -13,11 +13,13 @@ import {
   Container,
   Row,
   Col,
+  Toast,
 } from "reactstrap";
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import LoginApi from "../../utils/LoginApi.js";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
   const mainRef = useRef(null);
   useEffect(() => {
@@ -35,17 +37,19 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       console.log("login")
-      const response = await LoginApi({ email, password });
+      const response = await LoginApi({ email, password,code });
       console.log(response)
-      if (response.message === "Two factor authentication required") {
+      if (response.message === "Invalid code") {
         setIs2FARequired(true);
+        toast.error(error.message)
       } else {
-        // Successful login, redirect to home
         console.log("Login successful:", response);
+        toast.success(response)
         window.location.href = "/";
       }
     } catch (error) {
       setError("Login failed. Please check your credentials.");
+      toast.error(error.message +" invalid code")
     }
   };
 
@@ -145,7 +149,6 @@ const Login = () => {
                         </InputGroup>
                       </FormGroup>
                       {/* Render the input for the 2FA code if 2FA is required */}
-                      {is2FARequired && (
                         <FormGroup>
                           <InputGroup className="input-group-alternative">
                             <InputGroupAddon addonType="prepend">
@@ -161,7 +164,7 @@ const Login = () => {
                             />
                           </InputGroup>
                         </FormGroup>
-                      )}
+                      
                       <div className="custom-control custom-control-alternative custom-checkbox">
                         <input
                           className="custom-control-input"
@@ -226,6 +229,7 @@ const Login = () => {
         </section>
       </main>
       <SimpleFooter />
+      <ToastContainer />
     </>
   );
 };

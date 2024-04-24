@@ -21,9 +21,9 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
     try {
       if (type === 'venue') {
         const venueId = localStorage.getItem('venueID');
-        await updateVenue(venueId, formData);
+        const response = await updateVenue(venueId, formData);
         toast.success("Venue updated successfully");
-        console.log("Venue updated successfully");
+        console.log("Venue updated successfully"+response);
       } else if (type === 'activity') {
         const activityId = localStorage.getItem('activityID');
         await updateActivity(activityId, formData);
@@ -34,7 +34,7 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
       onClose();
     } catch (error) {
       setError(error.message);
-      // toast.success("Something Went wrong try again");
+      toast.success("Something Went wrong try again");
 
     }
   };

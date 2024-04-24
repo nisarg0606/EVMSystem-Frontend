@@ -21,7 +21,6 @@ const updateVenue = async (id, venueData) => {
     }
 
     console.log("Venue updated successfully");
-    window.location.reload();
     return response.json();
   } catch (error) {
     console.error('Error updating venue:', error);

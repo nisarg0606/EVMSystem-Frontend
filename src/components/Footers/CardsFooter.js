@@ -105,7 +105,8 @@ const CardsFooter = () => {
                       title={activity.name}
                       id={activity._id}
                       date={activity.date}
-                      time={activity.time}
+                      Price={activity.price}
+                      time={activity.start_time}
                       status={activity.status}
                       activityType={`Activity : ${activity.type_of_activity}`}
                       description={`${activity.description} Location: ${activity.venue ? activity.venue.location : 'Unknown location'} Capacity: ${activity.participants_limit}`}

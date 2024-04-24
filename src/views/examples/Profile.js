@@ -83,11 +83,13 @@ const Profile = () => {
     };
   
     try {
-      await UpdateUserProfile(updatedProfileData);
+     const response= await UpdateUserProfile(updatedProfileData);
       toggleUpdateModal();
       fetchUserProfile();
+      toast.success(response.message)
     } catch (error) {
       console.error("Error updating user profile:", error.message);
+      toast.error(error.message)
     }
   };
   const enable2FA = () => {
@@ -96,11 +98,14 @@ const Profile = () => {
 
   const disable2FA = async () => {
     try {
-      await Disable2fa(true);
+      const response = await Disable2fa(true);
       console.log("2FA disabled successfully!");
       window.location.reload();
+      toast.success(response.message)
+
     } catch (error) {
       console.error("Error disabling 2FA:", error.message);
+      toast.error(error.message)
     }
   };
 
@@ -127,15 +132,19 @@ const Profile = () => {
       const response = await fun2fa(code);
       if (response && response.error) {
         setErrorMessage(response.error);
+        toast.success(response.error)
         setSuccessMessage("");
       } else {
         setSuccessMessage(response.message);
         setErrorMessage("");
+        toast.success(response.message)
+
       }
       window.location.reload();
     } catch (error) {
-      setErrorMessage("Failed to enable 2FA. Please try again later.");
+      setErrorMessage("Failed to enable 2FA. Code is incorrect.");
       setSuccessMessage("");
+      toast.error(error.message+" Code is incorrect.")
     }
   };
 
@@ -345,6 +354,7 @@ const Profile = () => {
           </Button>
         </ModalFooter>
       </Modal>
+      <ToastContainer/>
     </>
   );
 }

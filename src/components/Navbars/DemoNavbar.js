@@ -97,6 +97,13 @@ const DemoNavbar = () => {
               <Nav className="align-items-lg-center ml-lg-auto" navbar>
                 {isAuthenticated ? (
                   <>
+                  <NavItem>
+                      <NavLink>
+                        <Link to="/home" className="nav-link">
+                          <span className="nav-link-inner--text">Home</span>
+                        </Link>
+                      </NavLink>
+                    </NavItem>
                     <NavItem>
                       <NavLink>
                         <Link to="/activity" className="nav-link">
