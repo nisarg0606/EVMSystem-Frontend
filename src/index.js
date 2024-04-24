@@ -16,6 +16,7 @@ import Register from "views/examples/Register.js";
 import Venue from "views/examples/Venue";
 import Activity from "views/examples/Activity";
 import People from "views/examples/People";
+import Home from "views/examples/Home";
 // import Test from "views/examples/Test";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -31,6 +32,7 @@ root.render(
       <Route path="/venue" exact element={<Venue/>}/>
       <Route path="/activity" exact element={<Activity/>}/>
       <Route path="/peoples" exact element={<People/>}/>
+      <Route path="/home" exact element={<Home/>}/>
       {/* <Route path="/test-page" exact element={<Test/>}/> */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

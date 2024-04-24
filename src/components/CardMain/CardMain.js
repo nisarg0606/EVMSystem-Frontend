@@ -11,7 +11,7 @@ import BookingModal from '../../components/CardMain/ShowBookingModel.js';
 import BookSlotModel from './ShowBookSlotModel.js';
 import BookActivityModel from './ShowBookingActivityModel.js';
 
-const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, time, status }) => {
+const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, price, start_time,end_time, status }) => {
   const [expanded, setExpanded] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -161,12 +161,16 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                     Book slot
                   </Button>
                 )}
-                {cardType === 'activity' && (
-                  <Button
-                    onClick={() => handleBookActivity(id, 'activity')}
-                  >
-                    Book activity
-                  </Button>
+                {userRole === 'customer' && (
+                  <>
+                    {cardType === 'activity' && (
+                      <Button
+                        onClick={() => handleBookActivity(id, 'activity')}
+                      >
+                        Book activity
+                      </Button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -223,9 +227,19 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                 {date}
               </div>
             )}
-            {expanded && time && (
+            {expanded && price && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {time}
+                {price}
+              </div>
+            )}
+            {expanded && start_time && (
+              <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
+                {start_time}
+              </div>
+            )}
+             {expanded && end_time && (
+              <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
+                {end_time}
               </div>
             )}
             {expanded && status && (

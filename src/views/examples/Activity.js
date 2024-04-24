@@ -10,7 +10,11 @@ import {
     Form,
     FormGroup,
     Label,
-    Input
+    Input,
+    DropdownToggle,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem
 } from 'reactstrap';
 import CardMain from 'components/CardMain/CardMain';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
@@ -20,6 +24,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GetMyActivities from '../../utils/MyActivities.js';
+import GetUpCommingActivites from 'utils/getUpCommingActivities.js';
 
 const Activity = () => {
     const [activities, setActivities] = useState([]);
@@ -36,17 +41,24 @@ const Activity = () => {
     const [participantsLimit, setParticipantsLimit] = useState('');
     const [price, setPrice] = useState('');
     const [image, setImage] = useState(null);
-    
+    const [getUpCommingActivities, setUpCommingActivites] = useState([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [dropdownItems, setDropdownItems] = useState([]);
+    const [venueId, setVenueID] = useState('');
+    const [venueName, setVenueName] = useState('');
+
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+
     const [modalLoading, setModalLoading] = useState(false);
     const userRole = localStorage.getItem("role");
 
     const [modal, setModal] = useState(false);
     const toggleModal = () => setModal(!modal);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setModalLoading(true);
-        
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', description);
@@ -58,7 +70,7 @@ const Activity = () => {
         formData.append('participants_limit', participantsLimit);
         formData.append('price', price);
         formData.append('image', image);  // File upload
-        
+
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post('http://localhost:5000/activities', formData, {
@@ -67,8 +79,9 @@ const Activity = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            
+
             toast.success("Activity Created successfully");
+            window.location.reload()
             setModal(false);
         } catch (error) {
             toast.error(`Error: ${error.response ? error.response.data.message : error.message}`);
@@ -90,6 +103,31 @@ const Activity = () => {
         };
         fetchData();
     }, []);
+
+    const handleGetUpcommingActivity = async () => {
+        try {
+            const activitiesResponse = await GetUpCommingActivites();
+            setUpCommingActivites(activitiesResponse.upcoming[0].venue_name);
+            console.log(activitiesResponse.upcoming[0].venue_name)
+            const venueNames = activitiesResponse.upcoming.map(activity => activity.venue_name);
+            const items = activitiesResponse.upcoming.map(activity => ({
+                venue: activity.venue,
+                venue_name: activity.venue_name,
+                booking_date: activity.booking_date,
+            }));
+            console.log(items)
+            setDropdownItems(items);
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+        }
+    };
+    const handleItemClick = (venue, venueName,date) => {
+        setVenue(venue);
+        setVenueName(venueName);
+        setDate(date);
+    };
 
     const indexOfLastActivity = currentPage * activitiesPerPage;
     const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
@@ -137,12 +175,12 @@ const Activity = () => {
                         <Container>
                             <Card className="card-profile shadow mt--300">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
-                                {userRole !== 'customer' && (
+                                    {userRole !== 'customer' && (
 
-                                    <Button onClick={toggleModal} className="mr-2 tw-text-black">
-                                        Create Activity
-                                    </Button>
-                                )}
+                                        <Button onClick={toggleModal} className="mr-2 tw-text-black">
+                                            Create Activity
+                                        </Button>
+                                    )}
                                     <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
                                     {currentActivities.map((activity) => (
                                         <CardMain
@@ -154,7 +192,8 @@ const Activity = () => {
                                             venue={`Venue: ${activity.venue ? activity.venue.name : 'To be announced'}`}
                                             activityType={`Type of Activity: ${activity.type_of_activity}`}
                                             date={`Date: ${new Date(activity.date).toLocaleDateString()}`}
-                                            time={`Time: ${activity.time}`}
+                                            start_time={`Start Time: ${activity.start_time}`}
+                                            end_time={`End Time: ${activity.end_time}`}
                                             participantsLimit={`Participants Limit: ${activity.participants_limit}`}
                                             price={`Price: $${activity.price}`}
                                             cardType={'activity'}
@@ -188,109 +227,122 @@ const Activity = () => {
                                     <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
                                 </div>
                             ) : (
-                            <Form onSubmit={handleSubmit}>
-                                <FormGroup>
-                                    <Label for="name">Name</Label>
-                                    <Input
-                                        type="text"
-                                        id="name"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="description">Description</Label>
-                                    <Input
-                                        type="textarea"
-                                        id="description"
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="venue">Venue</Label>
-                                    <Input
-                                        type="text"
-                                        id="venue"
-                                        value={venue}
-                                        onChange={(e) => setVenue(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="typeOfActivity">Type of Activity</Label>
-                                    <Input
-                                        type="text"
-                                        id="typeOfActivity"
-                                        value={typeOfActivity}
-                                        onChange={(e) => setTypeOfActivity(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="date">Date</Label>
-                                    <Input
-                                        type="date"
-                                        id="date"
-                                        value={date}
-                                        onChange={(e) => setDate(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="startTime">Start Time</Label>
-                                    <Input
-                                        type="time"
-                                        id="startTime"
-                                        value={startTime}
-                                        onChange={(e) => setStartTime(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="endTime">End Time</Label>
-                                    <Input
-                                        type="time"
-                                        id="endTime"
-                                        value={endTime}
-                                        onChange={(e) => setEndTime(e.target.value)}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="participantsLimit">Participants Limit</Label>
-                                    <Input
-                                        type="number"
-                                        id="participantsLimit"
-                                        value={participantsLimit}
-                                        onChange={(e) => setParticipantsLimit(Number(e.target.value))}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="price">Price</Label>
-                                    <Input
-                                        type="number"
-                                        id="price"
-                                        value={price}
-                                        onChange={(e) => setPrice(Number(e.target.value))}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="image">Image</Label>
-                                    <Input
-                                        type="file"
-                                        id="image"
-                                        onChange={(e) => setImage(e.target.files[0])}
-                                        required
-                                    />
-                                </FormGroup>
-                                <Button type="submit" className='tw-text-black' color="primary">Create Activity</Button>
-                            </Form>
-
+                                <Form onSubmit={handleSubmit}>
+                                    <FormGroup>
+                                        <Label for="name">Name</Label>
+                                        <Input
+                                            type="text"
+                                            id="name"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="description">Description</Label>
+                                        <Input
+                                            type="textarea"
+                                            id="description"
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <Button onClick={() => handleGetUpcommingActivity()}>Get upcoming venues</Button>
+                                    <Button>Book venues</Button>
+                                    <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                                        <DropdownToggle caret>
+                                            Dropdown
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            {dropdownItems.map((item, index) => (
+                                                <DropdownItem key={index} onClick={() => handleItemClick(item.venue, item.venue_name, item.booking_date)}>
+                                                    {"Name : "+item.venue_name + " , Date : "+ item.booking_date}
+                                                </DropdownItem>
+                                            ))}
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                    <FormGroup>
+                                        <Label for="venue">Venue</Label>
+                                        <Input
+                                            type="text"
+                                            id="venue"
+                                            value={venue}
+                                            disabled={true}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="typeOfActivity">Type of Activity</Label>
+                                        <Input
+                                            type="text"
+                                            id="typeOfActivity"
+                                            value={typeOfActivity}
+                                            onChange={(e) => setTypeOfActivity(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="date">Date</Label>
+                                        <Input
+                                            type="date"
+                                            id="date"
+                                            value={date}
+                                            required
+                                            readOnly
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="startTime">Start Time</Label>
+                                        <Input
+                                            type="time"
+                                            id="startTime"
+                                            value={startTime}
+                                            onChange={(e) => setStartTime(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="endTime">End Time</Label>
+                                        <Input
+                                            type="time"
+                                            id="endTime"
+                                            value={endTime}
+                                            onChange={(e) => setEndTime(e.target.value)}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="participantsLimit">Participants Limit</Label>
+                                        <Input
+                                            type="number"
+                                            id="participantsLimit"
+                                            value={participantsLimit}
+                                            onChange={(e) => setParticipantsLimit(Number(e.target.value))}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="price">Price</Label>
+                                        <Input
+                                            type="number"
+                                            id="price"
+                                            value={price}
+                                            onChange={(e) => setPrice(Number(e.target.value))}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="image">Image</Label>
+                                        <Input
+                                            type="file"
+                                            id="image"
+                                            onChange={(e) => setImage(e.target.files[0])}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <Button type="submit" className='tw-text-black' color="primary">Create Activity</Button>
+                                </Form>
                             )}
                         </div>
                     </ModalBody>
