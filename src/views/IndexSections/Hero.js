@@ -26,18 +26,27 @@ class Hero extends React.Component {
             <Container className="shape-container d-flex align-items-center py-lg">
               <div className="col px-0">
                 <Row className="align-items-center justify-content-center">
-                  <Col className="text-center" lg="10">
+                  <Col className="tw-mx-auto tw-text-center" lg="10">
                     <img
                       src="https://upload.wikimedia.org/wikipedia/commons/6/63/Energieversorgung_Mittelrhein_Logo.svg"
                       alt="EVM-System Logo"
                       style={{ maxHeight: "50px", maxWidth: "150px" }} // Adjust the max height and width as needed
+                      className="tw-mx-auto"
                     />
-                    <h1> EVENT VENUE MANAGMENT SYSTEM</h1>
-                    <p className="lead text-white">
-                     Your vision. Our innovation: EVM-System the total Event solutions..
-                     Book You show today..! 
+                    <br />
+                    <h1 className="tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-gray-800 tw-my-4">EVENT VENUE MANAGEMENT SYSTEM</h1>
+                    <p className="tw-text-center tw-text-white tw-text-lg">
+                      <span className="tw-text-gradient">Your vision.</span>
+                      <span className="tw-text-gradient">Our innovation:</span>
+                      <span className="tw-text-gradient">EVM-System the total Event solutions..</span>
+                      <span className="tw-text-gradient">Book You show today..!</span>
                     </p>
+
+
+
                   </Col>
+
+
                 </Row>
               </div>
             </Container>

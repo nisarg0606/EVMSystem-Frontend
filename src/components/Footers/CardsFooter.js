@@ -14,8 +14,10 @@ import {
   Row,
   Col,
   UncontrolledTooltip,
-  Spinner // Import Spinner component from Reactstrap
+  Spinner
 } from "reactstrap";
+import CardMain from "../../components/CardMain/CardMain.js";
+
 
 const CardsFooter = () => {
   const [loading, setLoading] = useState(true);
@@ -26,10 +28,10 @@ const CardsFooter = () => {
     const fetchData = async () => {
       try {
         const token = Cookies.get('token');
-  
+
         const activitiesResponse = await GetAllActivities();
         setActivities(activitiesResponse);
-  
+
         const venuesResponse = await GetAllVenues();
         setVenues(Object.values(venuesResponse.venues));
       } catch (error) {
@@ -38,51 +40,56 @@ const CardsFooter = () => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
   return (
     <footer className="footer has-cards">
       {loading ? (
-        <div className="text-center"> 
-        <p>Loading...</p>
-          <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} /> 
+        <div className="text-center">
+          <p>Loading...</p>
+          <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
         </div>
       ) : (
         <Container className="container-lg">
-          <Row>
-            <Col className="mb-5 mb-md-0" md="6">
-              <Card className="card-lift--hover shadow border-0">
+          <Card className="p-4 mb-4">
+            <Row>
+              <Col className="mb-5 mb-md-0" md="6">
                 <h1>Venues</h1>
-                <ul>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {venues.map(venue => (
-                    <li key={venue._id}>
-                      <h2>{venue.name}</h2>
-                      <p>{venue.description}</p>
-                      <p>Location: {venue.location}</p>
-                      <p>Capacity: {venue.capacity}</p>
-                    </li>
+                    <CardMain
+                      key={venue._id}
+                      imageSrc={venue.imagesURL[0]}
+                      title={venue.name}
+                      capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
+                      availability={venue.availability}
+                      description={`${venue.description} Location: ${venue.location} Capacity: ${venue.capacity}`}
+                      location={`Location: ${venue.location}`}
+                      venueOwner={`Venue Owner: ${venue.venueOwner.username}`}
+                      venueOwnerEmail={`Owner Email: ${venue.venueOwner.email}`}
+                    />
                   ))}
-                </ul>
-              </Card>
-            </Col>
-            <Col className="mb-5 mb-lg-0" md="6">
-              <Card className="card-lift--hover shadow border-0">
-                <h1> Upcomming Activities</h1>
-                <ul>
-                  {activities.map(activity => (
-                    <li key={activity._id}>
-                      <h2>{activity.name}</h2>
-                      <p>{activity.description}</p>
-                      <p>Location: {activity.venue.location}</p>
-                      <p>Capacity: {activity.participants_limit}</p>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </Col>
-          </Row>
+                </div>
+              </Col>
+              <Col className="mb-5 mb-lg-0" md="6">
+                  <h1> Upcoming Activities</h1>
+                  <ul>
+                    {activities.map(activity => (
+                      <CardMain
+                        key={activity._id}
+                        imageSrc={activity.imagesURL[0]} 
+                        title={activity.name}
+                        activityType={`Activity : ${activity.type_of_activity}`}
+                        description={`${activity.description} Location: ${activity.venue.location} Capacity: ${activity.participants_limit}`}
+                        location={`Location : ${activity.venue.location}`}
+                      />
+                    ))}
+                  </ul>
+              </Col>
+            </Row>
+          </Card>
         </Container>
       )}
       <Container>
@@ -123,6 +130,7 @@ const CardsFooter = () => {
           </Col>
         </Row>
       </Container>
+      
     </footer>
   );
 };

@@ -26,7 +26,8 @@ import Carousel from "./IndexSections/Carousel.js";
 import Icons from "./IndexSections/Icons.js";
 import Login from "./IndexSections/Login.js";
 import Download from "./IndexSections/Download.js";
-import Test from "./examples/Test.js";
+import Test from "../components/CardMain/CardMain.js";
+import 'tailwindcss/tailwind.css';
 
 class Index extends React.Component {
   componentDidMount() {
@@ -40,7 +41,6 @@ class Index extends React.Component {
         <DemoNavbar />
         <main ref="main">
           <Hero />
-          <Test/>
           {/* <Buttons />
           <Inputs />
           <section className="section">
@@ -73,6 +73,7 @@ class Index extends React.Component {
           <Login />
           <Download /> */}
         </main>
+       
         <CardsFooter />
       </>
     );
