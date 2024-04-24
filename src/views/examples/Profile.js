@@ -54,6 +54,9 @@ const Profile = () => {
     try {
       const data = await GetUserProfile();
       setUser(data.user);
+      setFirstName(data.user.firstName); 
+      setLastName(data.user.lastName); 
+      setInterests(data.user.interestedIn.join(', ')); 
       setLoading(false);
     } catch (error) {
       setError(error.message);
