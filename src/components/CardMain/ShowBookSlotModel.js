@@ -35,7 +35,7 @@ const BookSlotModel = ({ id, onClose }) => {
     });
     const [showCardDetailsForm, setShowCardDetailsForm] = useState(false);
     const [price, setPrice] = useState("");
-    const [doublePrice, setDoublePrice] = useState(false); 
+    const [doublePrice, setDoublePrice] = useState(false);
     const [popup, setPopup] = useState(null);
 
     useEffect(() => {
@@ -72,13 +72,23 @@ const BookSlotModel = ({ id, onClose }) => {
 
     const handleDateChange = (e) => {
         const selectedDate = new Date(e.target.value);
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set hours to 0 for accurate comparison
 
-        const formattedDate = `${year}-${month}-${day}`;
-        setSelectedDate(formattedDate);
+        // Check if selected date is today or a future date
+        if (selectedDate >= today) {
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+
+            const formattedDate = `${year}-${month}-${day}`;
+            setSelectedDate(formattedDate);
+        } else {
+            // Notify user about invalid date selection
+            toast.error('Please select today or a future date.');
+        }
     };
+
 
     const handleSubmit = async () => {
         try {
@@ -105,7 +115,7 @@ const BookSlotModel = ({ id, onClose }) => {
     const handleCheckboxChange = (from, to) => {
         const slotDate = `${from} - ${to}`;
         const slotPrice = availableSlots.find(s => s.from === from && s.to === to)?.price || 0;
-    
+
         setSelectedSlots(prevSelectedSlots => {
             if (prevSelectedSlots.includes(slotDate)) {
                 setPrice(prevPrice => prevPrice - slotPrice);
@@ -115,9 +125,9 @@ const BookSlotModel = ({ id, onClose }) => {
                 return [...prevSelectedSlots, slotDate];
             }
         });
-    
+
     };
-    
+
 
     const handleBookSlot = async () => {
         setShowFakePaymentModal(true);
@@ -165,16 +175,16 @@ const BookSlotModel = ({ id, onClose }) => {
         return cardDetails.cardNumber !== '' && cardDetails.expiryDate !== '' && cardDetails.cvv !== '';
     };
 
-    
-  const showNotification = (type, message) => {
-    setPopup({ type, message });
-    setTimeout(() => {
-      setPopup(null);
-    }, 2000);
-  };
-  const closePopup = () => {
-    setPopup(null);
-  };
+
+    const showNotification = (type, message) => {
+        setPopup({ type, message });
+        setTimeout(() => {
+            setPopup(null);
+        }, 2000);
+    };
+    const closePopup = () => {
+        setPopup(null);
+    };
 
     if (loading) {
         return (
@@ -251,7 +261,7 @@ const BookSlotModel = ({ id, onClose }) => {
                 </Form>
 
                 {availableSlots.length > 0 && (
-                    <div className="mt-4">
+                    <div className="mt-4" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         <h3 className="text-lg font-bold mb-2">Available Slots:</h3>
                         <ul>
                             {availableSlots.map((slot) => (
@@ -278,6 +288,7 @@ const BookSlotModel = ({ id, onClose }) => {
                         </button>
                     </div>
                 )}
+
 
 
                 {noSlotsMessage && (
@@ -314,7 +325,7 @@ const BookSlotModel = ({ id, onClose }) => {
                                 <FormGroup>
                                     <Label for="cvv">CVV:</Label>
                                     <Input
-                                        type="text"
+                                        type="password"
                                         name="cvv"
                                         value={cardDetails.cvv}
                                         onChange={handleCardDetailsChange}
@@ -337,12 +348,12 @@ const BookSlotModel = ({ id, onClose }) => {
 
             </div>
             {popup && (
-            <Popup
-              type={popup.type}
-              message={popup.message}
-              onClose={() => setPopup(null)}
-            />
-          )}
+                <Popup
+                    type={popup.type}
+                    message={popup.message}
+                    onClose={() => setPopup(null)}
+                />
+            )}
         </div>
     );
 };

@@ -97,7 +97,7 @@ const BookActivityModel = ({ id, onClose }) => {
                     <FormGroup>
                         <Label for="csc">Csv:</Label>
                         <Input
-                            type="text"
+                            type="password"
                             id="csc"
                             value={csc}
                             onChange={handleCSCChange}
