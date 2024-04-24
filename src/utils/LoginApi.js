@@ -18,10 +18,16 @@ const loginApi = async (credentials) => {
 
     const data = await response.json();
     const token = data.user.token;
+    const pId = data.user._id;
+    const role = data.user.role;
+
+
 
     // Set the token as a cookie with a 1-day expiration
     Cookies.set('token', token, { expires: 1 });
     localStorage.setItem('token', token)
+    localStorage.setItem('pId',pId)
+    localStorage.setItem('role',role)
 
     return data;
   } catch (error) {

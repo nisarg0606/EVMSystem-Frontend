@@ -3,6 +3,9 @@ const BASE_URL = "http://localhost:5000/";
 
 const RegitserApi = async (credentials) => {
   try {
+    console.log("Request URL:", `${BASE_URL}users/register`);
+    console.log("Request Body:", credentials);
+
     const response = await fetch(`${BASE_URL}users/register`, {
       method: "POST",
       headers: {
@@ -11,17 +14,15 @@ const RegitserApi = async (credentials) => {
       body: JSON.stringify(credentials),
     });
 
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
     const data = await response.json();
-    localStorage.setItem("token",data.user.token)
-    return data;
+    console.log("Response:", data); // Log response
+    
+    // Rest of the code...
   } catch (error) {
-    console.log("Error logging in:", error.message);
+    console.log("Error registering:", error.message);
     throw error;
   }
 };
+
 
 export default RegitserApi;

@@ -1,10 +1,12 @@
 const BASE_URL = "http://localhost:5000/";
+const token = localStorage.getItem("token");
 
-const GetAllVeniues = () => {
+const Peoples = () => {
     
-    return fetch(`${BASE_URL}venues/`, {
+    return fetch(`${BASE_URL}users/similarInterests`, {
         method: "GET",
         headers: {
+            'Authorization': `Bearer ${token}`,
             "Content-Type": "application/json"
         }
     })
@@ -20,4 +22,4 @@ const GetAllVeniues = () => {
     });
 }
 
-export default GetAllVeniues ;
+export default Peoples ;

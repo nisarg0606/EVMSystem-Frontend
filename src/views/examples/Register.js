@@ -1,35 +1,54 @@
 import React, { useState } from "react";
-import { Button, Card, CardHeader, CardBody, FormGroup, Form, Input, InputGroupAddon, InputGroupText, InputGroup, Container, Row, Col, Label } from "reactstrap";
+import { Button, Card, CardBody, FormGroup, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Container, Row, Col, Label } from "reactstrap";
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
-import RegitserApi from "utils/RegisterApi";
-
+import RegisterApi from "utils/RegisterApi.js";
+import { Link } from 'react-router-dom';
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
-      // Prepare user data
       const userData = {
         username: username,
         email: email,
         password: password,
-        isAdmin: isAdmin
+        firstName: firstName,
+        lastName: lastName,
+        role: isAdmin ? "venueOwner/eventPlanner" : "customer"
       };
 
-      // Call loginApi to register user
-      const data = await RegitserApi(userData);
-      console.log('User registered successfully:', data);
-      window.location.href = "/page-login";
+      const Response = await RegisterApi(userData);
+      if (Response) {
+        setSuccess(true);
+        console.log(Response.message);
+      } else {
+        alert("Registration successful. You can now login.");
+        window.location.href = "/login";
+      }
     } catch (error) {
       console.error('Error occurred during registration:', error);
-      // Handle error condition as needed
     }
+    setLoading(false);
   };
+
+  {
+    success && (
+      <div className="text-success text-center">
+        Registration successful. You can now <Link to="/page-login">login</Link>.
+      </div>
+    )
+  }
 
   return (
     <>
@@ -45,24 +64,36 @@ const Register = () => {
             <span />
             <span />
             <span />
-          </div>
-          <Container className="pt-lg-7">
+            <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+
+          </div>          <Container className="pt-lg-7">
             <Row className="justify-content-center">
               <Col lg="5">
                 <Card className="bg-secondary shadow border-0">
-                  <CardHeader className="bg-white pb-5">
-                    <div className="text-muted text-center mb-3">
-                      <small>Sign up with</small>
-                    </div>
-                    <div className="text-center">
-                      {/* GitHub and Google buttons */}
-                    </div>
-                  </CardHeader>
                   <CardBody className="px-lg-5 py-lg-5">
-                    <div className="text-center text-muted mb-4">
-                      <small>Or sign up with credentials</small>
-                    </div>
                     <Form onSubmit={handleRegister}>
+                      {/* First Name */}
+                      <FormGroup>
+                        <InputGroup className="input-group-alternative mb-3">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-single-02" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input placeholder="First Name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                        </InputGroup>
+                      </FormGroup>
+                      {/* Last Name */}
+                      <FormGroup>
+                        <InputGroup className="input-group-alternative mb-3">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-single-02" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input placeholder="Last Name" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                        </InputGroup>
+                      </FormGroup>
                       <FormGroup>
                         <InputGroup className="input-group-alternative mb-3">
                           <InputGroupAddon addonType="prepend">
@@ -93,6 +124,7 @@ const Register = () => {
                           <Input placeholder="Password" type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
                         </InputGroup>
                       </FormGroup>
+
                       {/* Admin checkbox */}
                       <FormGroup check>
                         <Label check>
@@ -100,12 +132,25 @@ const Register = () => {
                           Admin
                         </Label>
                       </FormGroup>
+                      {/* Error message */}
+                      {error && <div className="text-danger mb-3">{error}</div>}
                       <div className="text-center">
-                        <Button className="mt-4" color="primary" type="submit">
-                          Create account
+                        <Button
+                          className="my-4 tw-text-black"
+                          color="primary"
+                          type="submit"
+                          disabled={loading} // Disable button while loading
+                        >
+                          {loading ? "Creating account..." : "Create account"}
                         </Button>
                       </div>
                     </Form>
+                    {/* Success message */}
+                    {success && (
+                      <div className="text-success text-center">
+                        Registration successful. You can now <a href="/page-login">login</a>.
+                      </div>
+                    )}
                   </CardBody>
                 </Card>
               </Col>
