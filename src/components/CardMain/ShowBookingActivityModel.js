@@ -46,7 +46,6 @@ const BookActivityModel = ({ id, onClose }) => {
             onClose();
         } catch (error) {
             console.log('Error booking slot:', error.message);
-            // Handle payment failure
             console.log('Payment failed!');
         }
         finally{
