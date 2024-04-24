@@ -252,7 +252,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
             )}
             {expanded && price && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                price : ${price}
+                Price per hour : ${price}
               </div>
             )}
             {expanded && start_time && (
