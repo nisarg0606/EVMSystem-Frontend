@@ -115,22 +115,16 @@ class DemoNavbar extends React.Component {
                         <>
                           <NavItem>
                             <NavLink
-                              className="nav-link-icon"
-                              href="https://twitter.com/creativetim"
-                              id="tooltip184698705"
-                              target="_blank"
+                            
                             >
-                              <Link to="/activites-page" className="nav-link">
+                              <Link to="/activity-page" className="nav-link">
                                 <span className="nav-link-inner--text">Activites</span>
                               </Link>
                             </NavLink>
                           </NavItem>
                           <NavItem>
                             <NavLink
-                              className="nav-link-icon"
-                              href="https://twitter.com/creativetim"
-                              id="tooltip184698705"
-                              target="_blank"
+                             
                             >
                               <Link to="/venue-page" className="nav-link">
                                 <span className="nav-link-inner--text">Venue</span>
@@ -139,10 +133,7 @@ class DemoNavbar extends React.Component {
                           </NavItem>
                           <NavItem>
                             <NavLink
-                              className="nav-link-icon"
-                              href="https://twitter.com/creativetim"
-                              id="tooltip184698705"
-                              target="_blank"
+                             
                             >
                               <Link to="/peoples-page" className="nav-link">
                                 <span className="nav-link-inner--text">Peoples</span>
@@ -156,10 +147,7 @@ class DemoNavbar extends React.Component {
                         <NavItem>
 
                           <NavLink
-                            className="nav-link-icon"
-                            href="https://twitter.com/creativetim"
-                            id="tooltip184698705"
-                            target="_blank"
+                            
                           >
                             <Link to="/register-page" className="nav-link">
                               <span className="nav-link-inner--text">Register</span>
@@ -169,10 +157,7 @@ class DemoNavbar extends React.Component {
                         </NavItem>
                         <NavItem>
                           <NavLink
-                            className="nav-link-icon"
-                            href="https://www.facebook.com/creativetim"
-                            id="tooltip333589074"
-                            target="_blank"
+                          
                           >
                             <Link to="/login-page" className="nav-link">
                               <span className="nav-link-inner--text">Login</span>
@@ -192,10 +177,7 @@ class DemoNavbar extends React.Component {
                     {isAuthenticated && (
 
                       <NavLink
-                        className="nav-link-icon"
-                        href="https://www.instagram.com/creativetimofficial"
-                        id="tooltip356693867"
-                        target="_blank"
+                      
                       >
                         <Link to="/profile-page" className="nav-link">
                           <span className="nav-link-inner--text">Profile</span>
@@ -207,10 +189,7 @@ class DemoNavbar extends React.Component {
                   {isAuthenticated && (
                     <NavItem>
                       <NavLink
-                        className="nav-link-icon"
-                        href="https://www.instagram.com/creativetimofficial"
-                        id="tooltip356693867"
-                        target="_blank"
+                       
                       >
                         <Link onClick={this.handleLogout} className="nav-link">
                           <span className="nav-link-inner--text">Logout</span>

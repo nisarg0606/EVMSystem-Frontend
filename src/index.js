@@ -13,6 +13,8 @@ import Landing from "views/examples/Landing.js";
 import Login from "views/examples/Login.js";
 import Profile from "views/examples/Profile.js";
 import Register from "views/examples/Register.js";
+import Venue from "views/examples/Venue";
+import Activity from "views/examples/Activity";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -24,6 +26,8 @@ root.render(
       <Route path="/login-page" exact element={<Login />} />
       <Route path="/profile-page" exact element={<Profile />} />
       <Route path="/register-page" exact element={<Register />} />
+      <Route path="/venue-page" exact element={<Venue/>}/>
+      <Route path="/activity-page" exact element={<Activity/>}/>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>

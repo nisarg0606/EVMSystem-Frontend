@@ -1,16 +1,10 @@
 const BASE_URL = "http://localhost:5000/";
 
 const GetAllActivites = () => {
-    const token = localStorage.getItem("token");
-    
-    if (!token) {
-        throw new Error("Token not found in local storage.");
-    }
 
     return fetch(`${BASE_URL}activities/`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
         }
     })
