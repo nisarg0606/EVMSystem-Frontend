@@ -1,6 +1,5 @@
 import DemoNavbar from "components/Navbars/DemoNavbar";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -16,7 +15,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import { REACT_APP_BACKEND_URL } from "../../config";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +23,8 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/users/login", {
+      console.log("Backend URL:", REACT_APP_BACKEND_URL);
+      const response = await fetch(`${REACT_APP_BACKEND_URL}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +57,13 @@ const Login = () => {
       <DemoNavbar />
       <main>
         <section className="section section-shaped section-lg">
-        <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+          <iframe
+            src="https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/"
+            title="Spline Design"
+            frameborder="0"
+            width="100%"
+            height="100%"
+          ></iframe>
 
           <div className="shape shape-style-1 bg-gradient-default">
             <span />
@@ -71,9 +77,7 @@ const Login = () => {
           </div>
           <Container className="py-md">
             <Row className="row-grid justify-content-between align-items-center">
-              <Col lg="6">
-                {/* Your existing content */}
-              </Col>
+              <Col lg="6">{/* Your existing content */}</Col>
               <Col className="mb-lg-auto" lg="5">
                 <Card className="bg-secondary shadow border-0">
                   <CardHeader className="bg-white pb-5">
@@ -136,15 +140,17 @@ const Login = () => {
                       </div>
                     </Form>
                     {error && (
-                      <div className="text-center text-danger mt-3">{error}</div>
+                      <div className="text-center text-danger mt-3">
+                        {error}
+                      </div>
                     )}
                   </CardBody>
                 </Card>
               </Col>
             </Row>
-      </Container>
-      </section>
-    </main >
+          </Container>
+        </section>
+      </main>
     </>
   );
 };

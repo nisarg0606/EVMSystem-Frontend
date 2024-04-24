@@ -1,18 +1,18 @@
-import React, { useState, useLayoutEffect } from 'react';
-import classNames from 'classnames';
-import EditModal from '../CardMain/EditModel.js';
-import { Button, Container } from 'reactstrap';
-import DeleteVenue from '../../utils/DeleteVenue.js';
-import DeleteActivity from '../../utils/DeleteActivity.js';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import ShowBookingModel from '../../components/CardMain/ShowBookingModel.js';
-import BookingModal from '../../components/CardMain/ShowBookingModel.js';
-import BookSlotModel from './ShowBookSlotModel.js';
-import BookActivityModel from './ShowBookingActivityModel.js';
-import Popup from 'components/PopUpModel.js';
-import Download from 'views/IndexSections/Download.js';
-import CsvDownloadModel from '../../components/CardMain/CsvDownloadModel.js';
+import React, { useState, useLayoutEffect } from "react";
+import classNames from "classnames";
+import EditModal from "../CardMain/EditModel.js";
+import { Button, Container } from "reactstrap";
+import DeleteVenue from "../../utils/DeleteVenue.js";
+import DeleteActivity from "../../utils/DeleteActivity.js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ShowBookingModel from "../../components/CardMain/ShowBookingModel.js";
+import BookingModal from "../../components/CardMain/ShowBookingModel.js";
+import BookSlotModel from "./ShowBookSlotModel.js";
+import BookActivityModel from "./ShowBookingActivityModel.js";
+import Popup from "components/PopUpModel.js";
+import Download from "views/IndexSections/Download.js";
+import CsvDownloadModel from "../../components/CardMain/CsvDownloadModel.js";
 
 const CardMain = ({
   id,
@@ -94,12 +94,12 @@ const CardMain = ({
 
   const handleCsvDownload = (id) => {
     setdownloadCSVParticipents(true);
-    localStorage.setItem('activityID',id);
+    localStorage.setItem("activityID", id);
   };
 
   const handleScvDownloadClose = () => {
     setshowBookingActivity(false);
-    localStorage.removeItem('activityID');
+    localStorage.removeItem("activityID");
   };
 
   const handleCloseShowBookingActivity = () => {
@@ -132,7 +132,10 @@ const CardMain = ({
         setError("Activity deleted successfully");
         showNotification("success", "Activity deleted successfully");
       }
-      window.location.reload();
+      // wait for 2 seconds before reloading the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       if (isVenue) {
         console.log("Venue Deleting failed.");
@@ -227,18 +230,15 @@ const CardMain = ({
                   </>
                 )}
 
-                {userRole === 'customer' && (
+                {userRole !== "customer" && (
                   <>
-                    {cardType === 'activity' && (
-                      <Button
-                        onClick={() => handleCsvDownload(id, 'activity')}
-                      >
-                        Csv
+                    {cardType === "activity" && (
+                      <Button onClick={() => handleCsvDownload(id, "activity")}>
+                        Download Csv of Participants
                       </Button>
                     )}
                   </>
                 )}
-
               </div>
             </div>
             <div className="tw-flex tw-items-center">
@@ -429,10 +429,11 @@ const CardMain = ({
         )}
 
         {DownloadCSVParticipents && (
-          <CsvDownloadModel onClose={handleScvDownloadClose} id={localStorage.getItem("activityID")} />
+          <CsvDownloadModel
+            onClose={handleScvDownloadClose}
+            id={localStorage.getItem("activityID")}
+          />
         )}
-
-
       </div>
       <ToastContainer />
     </Container>

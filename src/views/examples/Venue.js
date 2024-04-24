@@ -108,6 +108,8 @@ const Venue = () => {
       console.error("Error creating venue:", error);
       toast.error("Failed to Created venue", error);
     } finally {
+      //refrest the page
+      window.location.reload();
       setModalLoading(false);
     }
   };

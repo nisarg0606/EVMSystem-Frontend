@@ -1,19 +1,19 @@
-const BASE_URL = "http://localhost:5000/";
-
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 const CreateActivity = async (activityData) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   if (!token) {
     throw new Error("Token not found in local storage.");
   }
-  console.log(activityData)
+  console.log(activityData);
   const requestOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    body: activityData
+    body: activityData,
   };
 
   try {
@@ -24,8 +24,8 @@ const CreateActivity = async (activityData) => {
     console.log("Activity created successfully");
     return response.json();
   } catch (error) {
-    console.error('Error creating Activity:', error);
-    throw error; 
+    console.error("Error creating Activity:", error);
+    throw error;
   }
 };
 

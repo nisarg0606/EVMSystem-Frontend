@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
-const BASE_URL = "http://localhost:5000/";
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 
 function Test() {
   const [venues, setVenues] = useState([]);
@@ -9,18 +10,18 @@ function Test() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const token = Cookies.get('token');
+        const token = Cookies.get("token");
 
         const response = await fetch(`${BASE_URL}venues/`, {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`, 
-            "credentials": "same-origin"
-          }
+            Authorization: `Bearer ${token}`,
+            credentials: "same-origin",
+          },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch venues');
+          throw new Error("Failed to fetch venues");
         }
 
         const responseData = await response.json();
@@ -35,11 +36,7 @@ function Test() {
     fetchVenues();
   }, []);
 
-  return (
-    <div>
-    
-    </div>
-  );
+  return <div></div>;
 }
 
 export default Test;

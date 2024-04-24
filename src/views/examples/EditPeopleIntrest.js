@@ -1,8 +1,12 @@
-const BASE_URL = "http://localhost:5000/";
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 
-const EditPeopleIntrest = async () => {
+const EditPeopleIntrest = async (interested) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
+    const interestedIn = {
+      interested,
+    };
     if (!token) {
       throw new Error("Token not found in local storage.");
     }
@@ -10,7 +14,7 @@ const EditPeopleIntrest = async () => {
     const response = await fetch(`${BASE_URL}users/interests`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(interestedIn),
@@ -24,8 +28,8 @@ const EditPeopleIntrest = async () => {
     window.location.reload();
     return response.json();
   } catch (error) {
-    console.error('Error updating venue:', error);
-    throw error; 
+    console.error("Error updating venue:", error);
+    throw error;
   }
 };
 

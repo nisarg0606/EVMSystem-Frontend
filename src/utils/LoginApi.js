@@ -1,6 +1,7 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-const BASE_URL = "http://localhost:5000/";
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 
 const loginApi = async (credentials) => {
   try {
@@ -21,13 +22,11 @@ const loginApi = async (credentials) => {
     const pId = data.user._id;
     const role = data.user.role;
 
-
-
     // Set the token as a cookie with a 1-day expiration
-    Cookies.set('token', token, { expires: 1 });
-    localStorage.setItem('token', token)
-    localStorage.setItem('pId',pId)
-    localStorage.setItem('role',role)
+    Cookies.set("token", token, { expires: 1 });
+    localStorage.setItem("token", token);
+    localStorage.setItem("pId", pId);
+    localStorage.setItem("role", role);
 
     return data;
   } catch (error) {

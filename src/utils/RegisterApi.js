@@ -1,5 +1,5 @@
-
-const BASE_URL = "http://localhost:5000/"; 
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 
 const RegitserApi = async (credentials) => {
   try {
@@ -16,13 +16,12 @@ const RegitserApi = async (credentials) => {
 
     const data = await response.json();
     console.log("Response:", data); // Log response
-    
+
     // Rest of the code...
   } catch (error) {
     console.log("Error registering:", error.message);
     throw error;
   }
 };
-
 
 export default RegitserApi;

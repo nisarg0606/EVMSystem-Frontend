@@ -1,13 +1,13 @@
-
-const BASE_URL = "http://localhost:5000/";
-const token = localStorage.getItem('token');
+import { REACT_APP_BACKEND_URL } from "../../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
+const token = localStorage.getItem("token");
 
 const resetPassword = async (credentials) => {
   try {
     const response = await fetch(`${BASE_URL}users/resetpassword`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
@@ -16,7 +16,6 @@ const resetPassword = async (credentials) => {
     if (!response.ok) {
       throw new Error("reset password failed");
     }
-
 
     return response;
   } catch (error) {

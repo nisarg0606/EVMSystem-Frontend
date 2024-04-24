@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5000/";
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 const token = localStorage.getItem("token");
 const userRole = localStorage.getItem("role");
 

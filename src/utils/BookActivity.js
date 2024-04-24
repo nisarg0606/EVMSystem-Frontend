@@ -1,6 +1,6 @@
 import { loadStripe } from "@stripe/stripe-js";
+import { REACT_APP_BACKEND_URL, REACT_APP_SITE_KEY } from "../config";
 
-const BASE_URL = "http://localhost:5000/";
 const token = localStorage.getItem("token");
 
 const BookActivity = async (bookingQuantity, id, price, phone) => {
@@ -15,12 +15,10 @@ const BookActivity = async (bookingQuantity, id, price, phone) => {
     };
 
     console.log("requestBody", requestBody);
-    const stripe = await loadStripe(
-      "pk_test_51OyLXAG1gYMjrZo3DQVWWx9HImrkKGSsb8qO8xiCd3kUOEahrDA7AlgWY7cKTsrHEtZXMQSk49a7AY1qsXrfnFqw00LJN7elMY"
-    );
+    const stripe = await loadStripe(REACT_APP_SITE_KEY);
 
     // Send the POST request to the API endpoint
-    const response = await fetch(`${BASE_URL}activityBookings/`, {
+    const response = await fetch(`${REACT_APP_BACKEND_URL}activityBookings/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

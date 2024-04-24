@@ -1,9 +1,8 @@
-
-const BASE_URL = "http://localhost:5000/";
-
+import { REACT_APP_BACKEND_URL } from "../config";
+const BASE_URL = REACT_APP_BACKEND_URL + "/";
 const ShowBooking = async (id) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("Token not found in local storage.");
     }
@@ -11,10 +10,9 @@ const ShowBooking = async (id) => {
     const response = await fetch(`${BASE_URL}venueBookings/venue/${id}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-
     });
 
     if (!response.ok) {
@@ -23,7 +21,7 @@ const ShowBooking = async (id) => {
     return response.json();
   } catch (error) {
     console.error(error);
-    throw error; 
+    throw error;
   }
 };
 

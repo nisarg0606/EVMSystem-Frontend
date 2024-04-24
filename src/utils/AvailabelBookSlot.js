@@ -1,10 +1,10 @@
-const BASE_URL = "http://localhost:5000/";
+import { REACT_APP_BACKEND_URL } from "../config";
 const token = localStorage.getItem("token");
 
 const AvailabelSlot = async (id, date) => {
   try {
     // Construct the URL with the given id and date as query parameter
-    const url = `${BASE_URL}venueBookings/available/${id}?date=${date}`;
+    const url = `${REACT_APP_BACKEND_URL}/venueBookings/available/${id}?date=${date}`;
 
     const response = await fetch(url, {
       method: "GET",
