@@ -42,7 +42,7 @@ const Login = () => {
   const [is2FARequired, setIs2FARequired] = useState(false);
   const [error, setError] = useState(null);
   const [modal, setModal] = useState(false);
-  const [resetPassword, setResetPassword] = useState("");
+  const [resetPasswordEmail, setResetPasswordEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [recaptchaValue, setRecaptchaValue] = useState("");
 
@@ -236,29 +236,19 @@ const Login = () => {
         <ModalBody>
           <Form>
             <FormGroup>
-              <Label for="password">New Password</Label>
+              <Label for="email">Email</Label>
               <Input
-                type="password"
-                name="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="confirmPassword">Confirm Password</Label>
-              <Input
-                type="password"
-                name="confirmPassword"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="email"
+                name="emil"
+                id="email"
+                value={resetPasswordEmail}
+                onChange={(e) => setResetPasswordEmail(e.target.value)}
               />
             </FormGroup>
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={handlePasswordReset}>
+          <Button color="primary" className="tw-text-black" onClick={handlePasswordReset}>
             Reset Password
           </Button>{" "}
           <Button color="secondary" onClick={toggle}>
