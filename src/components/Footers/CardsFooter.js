@@ -69,7 +69,7 @@ const CardsFooter = () => {
             </Col>
             <Col className="mb-5 mb-lg-0" md="6">
               <Card className="card-lift--hover shadow border-0">
-                <h1>Activities</h1>
+                <h1> Upcomming Activities</h1>
                 <ul>
                   {activities.map(activity => (
                     <li key={activity._id}>
