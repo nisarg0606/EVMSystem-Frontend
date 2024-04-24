@@ -3,6 +3,7 @@ import updateVenue from '../../utils/UpdateVenue.js';
 import updateActivity from '../../utils/UpdateActivity.js'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import fetchActivities from 'utils/MyActivities.js';
 
 const EditModal = ({ fields, initialValues, onClose, type }) => { 
   const [formData, setFormData] = useState(initialValues);
@@ -30,7 +31,8 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
         toast.success("Activity updated successfully");
         console.log("Activity updated successfully");
       }
-      window.location.reload();
+      // window.location.reload();
+      fetchActivities();
       onClose();
     } catch (error) {
       setError(error.message);
@@ -57,6 +59,8 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
           </div>
         </form>
       </div>
+      <ToastContainer/>
+
     </div>
   );
 };

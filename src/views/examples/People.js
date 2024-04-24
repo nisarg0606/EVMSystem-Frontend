@@ -82,7 +82,16 @@ const People = () => {
                                 {loading ? (
                                     // Display the spinner while loading
                                     <div className="tw-flex tw-justify-center tw-my-4">
-                                        <Spinner color="primary" />
+                                        <Spinner
+                                            color="primary"
+                                            style={{
+                                                height: '3rem',
+                                                width: '3rem'
+                                            }}
+                                            type="grow"
+                                        >
+                                            Loading...
+                                        </Spinner>
                                     </div>
                                 ) : users.length === 0 ? (
                                     // Display a message if the user list is empty
@@ -110,7 +119,7 @@ const People = () => {
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))}
-                                
+
                                 </Pagination>
                             </div>
                         </Card>

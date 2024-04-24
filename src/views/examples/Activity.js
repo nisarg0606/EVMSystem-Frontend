@@ -89,7 +89,9 @@ const Activity = () => {
             setModalLoading(false);
         }
     };
-
+    const handleClick = () => {
+        window.location.href = 'venue';
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -123,7 +125,7 @@ const Activity = () => {
         } finally {
         }
     };
-    const handleItemClick = (venue, venueName,date) => {
+    const handleItemClick = (venue, venueName, date) => {
         setVenue(venue);
         setVenueName(venueName);
         setDate(date);
@@ -169,7 +171,16 @@ const Activity = () => {
                     {loading ? (
                         <div className="text-center">
                             <p>Loading...</p>
-                            <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+                            <Spinner
+                                color="primary"
+                                style={{
+                                    height: '3rem',
+                                    width: '3rem'
+                                }}
+                                type="grow"
+                            >
+                                Loading...
+                            </Spinner>
                         </div>
                     ) : (
                         <Container>
@@ -177,9 +188,10 @@ const Activity = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
                                     {userRole !== 'customer' && (
 
-                                        <Button onClick={toggleModal} className="mr-2 tw-text-black">
+                                        <Button onClick={() => { toggleModal(); handleGetUpcommingActivity(); }} className="mr-2 tw-text-black">
                                             Create Activity
                                         </Button>
+
                                     )}
                                     <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
                                     {currentActivities.map((activity) => (
@@ -248,8 +260,8 @@ const Activity = () => {
                                             required
                                         />
                                     </FormGroup>
-                                    <Button onClick={() => handleGetUpcommingActivity()}>Get upcoming venues</Button>
-                                    <Button>Book venues</Button>
+                                    {/* <Button onClick={() => handleGetUpcommingActivity()}>Get upcoming venues</Button> */}
+                                    <Button onClick={handleClick}>Book venues</Button>
                                     <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                         <DropdownToggle caret>
                                             Dropdown
@@ -257,7 +269,7 @@ const Activity = () => {
                                         <DropdownMenu>
                                             {dropdownItems.map((item, index) => (
                                                 <DropdownItem key={index} onClick={() => handleItemClick(item.venue, item.venue_name, item.booking_date)}>
-                                                    {"Name : "+item.venue_name + " , Date : "+ item.booking_date}
+                                                    {"Name : " + item.venue_name + " , Date : " + item.booking_date}
                                                 </DropdownItem>
                                             ))}
                                         </DropdownMenu>
