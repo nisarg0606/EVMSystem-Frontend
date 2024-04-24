@@ -28,6 +28,7 @@ import Login from "./IndexSections/Login.js";
 import Download from "./IndexSections/Download.js";
 import Test from "../components/CardMain/CardMain.js";
 import 'tailwindcss/tailwind.css';
+import SimpleFooter from "components/Footers/SimpleFooter.js";
 
 class Index extends React.Component {
   componentDidMount() {
@@ -73,8 +74,8 @@ class Index extends React.Component {
           <Login />
           <Download /> */}
         </main>
-       
         <CardsFooter />
+        <SimpleFooter/>
       </>
     );
   }

@@ -1,10 +1,17 @@
 const BASE_URL = "http://localhost:5000/";
 
-const GetAllVeniues = () => {
+const GetVenueById = () => {
+    const token = localStorage.getItem("token");
+    const id = localStorage.getItem("pId");
     
-    return fetch(`${BASE_URL}venues/`, {
+    if (!token) {
+        throw new Error("Token not found in local storage.");
+    }
+
+    return fetch(`${BASE_URL}venues/${id}`, {
         method: "GET",
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
         }
     })
@@ -20,4 +27,4 @@ const GetAllVeniues = () => {
     });
 }
 
-export default GetAllVeniues ;
+export default GetVenueById ;

@@ -1,3 +1,4 @@
+import SimpleFooter from "components/Footers/SimpleFooter";
 import React from "react";
 
 // reactstrap components
@@ -9,9 +10,9 @@ class Hero extends React.Component {
       <>
         <div className="position-relative">
           {/* Hero for FREE version */}
-          <section className="section section-hero section-shaped">
+          {/* <section className="section section-hero section-shaped">
             {/* Background circles */}
-            <div className="shape shape-style-1 shape-default">
+            {/* <div className="shape shape-style-1 shape-default">
               <span className="span-150" />
               <span className="span-50" />
               <span className="span-50" />
@@ -22,7 +23,19 @@ class Hero extends React.Component {
               <span className="span-100" />
               <span className="span-50" />
               <span className="span-100" />
-            </div>
+              <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+
+            </div>  */}
+            <section className="section-profile-cover section-shaped my-0">
+          {/* Circles background */}
+          {/* <iframe src='https://my.spline.design/3dtextbluecopy-e0ebfe5a55bf0182a2fd7acd1217991c/' frameborder='0' width='100%' height='100%'></iframe> */}
+          {/* <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>  */}
+          <div className="shape shape-style-1 shape-default alpha-4">
+            <span />
+            <span />
+            <span className="span-75" />            <span />
+            <span />
+          </div> 
             <Container className="shape-container d-flex align-items-center py-lg">
               <div className="col px-0">
                 <Row className="align-items-center justify-content-center">
@@ -41,15 +54,10 @@ class Hero extends React.Component {
                       <span className="tw-text-gradient">EVM-System the total Event solutions..</span>
                       <span className="tw-text-gradient">Book You show today..!</span>
                     </p>
-
-
-
                   </Col>
-
-
                 </Row>
               </div>
-            </Container>
+            </Container> 
             {/* SVG separator */}
             <div className="separator separator-bottom separator-skew zindex-100">
               <svg

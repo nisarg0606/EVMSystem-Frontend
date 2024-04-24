@@ -32,19 +32,22 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await LoginApi({ email, password }); // Pass email and password to LoginApi
+      const response = await LoginApi({ email, password });
       console.log("Login successful:", response);
-      window.location.href = "/";    } catch (error) {
-      setError("Login failed. Please check your credentials."); // Set error message
-    }
-  };
-
+      window.location.href = "/";
+    } catch (error) {
+      setError("Login failed. Please check your credentials.");
+    };
+  }
   return (
     <>
       <DemoNavbar />
       <main ref={mainRef}>
         <section className="section section-shaped section-lg">
+          
           <div className="shape shape-style-1 bg-gradient-default">
+          {/* <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>  */}
+
             {[...Array(8)].map((_, index) => (
               <span key={index} />
             ))}
@@ -145,7 +148,7 @@ const Login = () => {
                       </div>
                       <div className="text-center">
                         <Button
-                          className="my-4"
+                          className="my-4 tw-text-black   "
                           color="primary"
                           type="button"
                           onClick={handleLogin}
@@ -170,7 +173,7 @@ const Login = () => {
                   <Col className="text-right" xs="6">
                     <a
                       className="text-light"
-                      href="#pablo"
+                      href="/register-page"
                       onClick={(e) => e.preventDefault()}
                     >
                       <small>Create new account</small>

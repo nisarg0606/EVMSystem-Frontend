@@ -45,33 +45,26 @@ const Register = () => {
             <span />
             <span />
             <span />
+            {/* <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>  */}
+
           </div>
           <Container className="pt-lg-7">
             <Row className="justify-content-center">
               <Col lg="5">
                 <Card className="bg-secondary shadow border-0">
-                  <CardHeader className="bg-white pb-5">
-                    <div className="text-muted text-center mb-3">
-                      <small>Sign up with</small>
-                    </div>
-                    <div className="text-center">
-                      {/* GitHub and Google buttons */}
-                    </div>
-                  </CardHeader>
+                 
                   <CardBody className="px-lg-5 py-lg-5">
-                    <div className="text-center text-muted mb-4">
-                      <small>Or sign up with credentials</small>
-                    </div>
+                  
                     <Form onSubmit={handleRegister}>
                       <FormGroup>
-                        <InputGroup className="input-group-alternative mb-3">
+                        {/* <InputGroup className="input-group-alternative mb-3">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
                               <i className="ni ni-hat-3" />
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input placeholder="Username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-                        </InputGroup>
+                        </InputGroup> */}
                       </FormGroup>
                       <FormGroup>
                         <InputGroup className="input-group-alternative mb-3">
@@ -101,7 +94,9 @@ const Register = () => {
                         </Label>
                       </FormGroup>
                       <div className="text-center">
-                        <Button className="mt-4" color="primary" type="submit">
+                        <Button  className="my-4 tw-text-black   "
+                          color="primary"
+                          type="button">
                           Create account
                         </Button>
                       </div>
