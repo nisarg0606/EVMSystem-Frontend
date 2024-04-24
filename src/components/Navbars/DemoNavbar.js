@@ -42,6 +42,7 @@ const DemoNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.clear();
     window.location.href = "/login-page";
     setIsAuthenticated(false);
   };

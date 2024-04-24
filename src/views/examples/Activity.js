@@ -38,7 +38,8 @@ const Activity = () => {
     const [image, setImage] = useState(null);
     
     const [modalLoading, setModalLoading] = useState(false);
-    
+    const userRole = localStorage.getItem("role");
+
     const [modal, setModal] = useState(false);
     const toggleModal = () => setModal(!modal);
     
@@ -136,10 +137,12 @@ const Activity = () => {
                         <Container>
                             <Card className="card-profile shadow mt--300">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
+                                {userRole !== 'customer' && (
+
                                     <Button onClick={toggleModal} className="mr-2 tw-text-black">
                                         Create Activity
                                     </Button>
-
+                                )}
                                     <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
                                     {currentActivities.map((activity) => (
                                         <CardMain
