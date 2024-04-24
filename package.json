@@ -53,6 +53,7 @@
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.15",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@stripe/stripe-js": "^3.3.0",
     "axios": "^1.6.8",
     "bootstrap": "^4.6.2",
     "classnames": "2.3.2",
