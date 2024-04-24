@@ -8,11 +8,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ShowBookingModel from '../../components/CardMain/ShowBookingModel.js';
 import BookingModal from '../../components/CardMain/ShowBookingModel.js';
+import BookSlotModel from './ShowBookSlotModel.js';
+import BookActivityModel from './ShowBookingActivityModel.js';
 
 const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, time, status }) => {
   const [expanded, setExpanded] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showBookingSlot, setShowBookingSlot] = useState(false);
+  const [ShowBookingActivity, setshowBookingActivity] = useState(false);
   const token = localStorage.getItem("token");
   const [isMobile, setIsMobile] = useState(false);
   const [venueId, setVenueId] = useState("");
@@ -48,11 +52,38 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
     localStorage.removeItem('venueID');
   };
 
+  const handleBookSlot = async (id, type) => {
+    setShowBookingSlot(true);
+    if (type === 'venue') {
+      localStorage.setItem('venueID', id);
+      console.log("Venue ID set:", id);
+    }
+  };
+
+  const handleBookActivity = async (id, type) => {
+    setshowBookingActivity(true);
+    if (type === 'activity') {
+      localStorage.setItem('activityID', id);
+      console.log("activityid ID set:", id);
+    }
+  };
+
+  const handleCloseShowBookingActivity = () => {
+    setshowBookingActivity(false);
+    localStorage.removeItem('activityID');
+  };
+
+  const handleCloseShowBookSlot = () => {
+    setShowBookingSlot(false);
+    localStorage.removeItem('venueID');
+  };
+
   const handleCloseModal = () => {
     setShowEditModal(false);
     localStorage.removeItem('venueID');
     localStorage.removeItem('activityID');
   };
+
   const handleDelete = async (id, isVenue) => {
     try {
       let response;
@@ -108,22 +139,37 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
           <div>
             <div className="tw-flex tw-justify-between tw-items-center">
               <h5 className="tw-mb-2 tw-text-lg tw-font-semibold tw-tracking-tight tw-text-gray-900 dark:text-white">{title}</h5>
+              <div className="tw-flex tw-justify-between tw-items-center">
+                {cardType === 'venue' && (
+                  <>
+                    {userRole !== 'customer' && (
+                      <>
 
-              {cardType === 'venue' && (
-                <>
-                  {userRole !== 'customer' && (
-
-                    <Button
-                      className="tw-ml-2 tw-inline-flex tw-items-center tw-px-3 tw-py-1 tw-text-sm tw-font-medium tw-text-center tw-text-white tw-bg-blue-600 tw-rounded-lg tw-hover:bg-green-700 tw-focus:ring-4 tw-focus:outline-none tw-focus:ring-green-300 dark:bg-green-700 dark:hover:bg-green-800 dark:focus:ring-green-800"
-                      onClick={() => handleShowBooking(id, 'venue')}
-                    >
-                      Show booking
-                    </Button>
-                  )}
+                        <Button
+                          onClick={() => handleShowBooking(id, 'venue')}
+                        >
+                          Show booking
+                        </Button>
+                      </>
+                    )}
                   </>
-              )}
+                )}
+                {cardType === 'venue' && (
+                  <Button
+                    onClick={() => handleBookSlot(id, 'venue')}
+                  >
+                    Book slot
+                  </Button>
+                )}
+                {cardType === 'activity' && (
+                  <Button
+                    onClick={() => handleBookActivity(id, 'activity')}
+                  >
+                    Book activity
+                  </Button>
+                )}
+              </div>
             </div>
-
             <div className="tw-flex tw-items-center">
               {/* Render either Availability Tag or Activity Type Tag */}
               {availability && !activityType && (
@@ -136,6 +182,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                   {availability}
                 </span>
               )}
+
 
               {activityType && !availability && (
                 <div className=" tw-top-2 tw-right-2 tw-text-xs tw-font-medium tw-rounded-full text-white tw-bg-green-500 tw-px-2 tw-py-0.5">
@@ -201,6 +248,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
               </svg>
             </Button>
+
             {userRole !== 'customer' && (
               <>
                 {token && (
@@ -221,7 +269,6 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                         Edit
                       </Button>
                     )}
-
 
                     {cardType === 'venue' && (
                       <Button
@@ -254,7 +301,14 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
         )}
         {showBookingModal && (
           <BookingModal onClose={handleCloseShowBookingModal} id={localStorage.getItem("venueID")} />
+        )}
 
+        {showBookingSlot && (
+          <BookSlotModel onClose={handleCloseShowBookSlot} id={localStorage.getItem("venueID")} />
+        )}
+
+        {ShowBookingActivity && (
+          <BookActivityModel onClose={handleCloseShowBookingActivity} id={localStorage.getItem("activityID")} />
         )}
       </div>
       <ToastContainer />
