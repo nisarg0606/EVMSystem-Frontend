@@ -87,7 +87,9 @@ const CardsFooter = () => {
                       location={`Location: ${venue.location}`}
                       // venueOwner={`Venue Owner: ${venue.venueOwner.name}`}
                       venueOwnerEmail={`Owner Email: ${venue.venueOwner.email}`}
+                      price={`${venue.pricePerHour}`}
                       cardType={'venue'}
+                      
                     />
                   ))}
                 </div>
@@ -120,6 +122,7 @@ const CardsFooter = () => {
                       activityType={`Activity : ${activity.type_of_activity}`}
                       description={`${activity.description} Location: ${activity.venue ? activity.venue.location : 'Unknown location'} Capacity: ${activity.participants_limit}`}
                       cardType={'activity'}
+                      price={activity.price}
                     />
                   ))}
 
