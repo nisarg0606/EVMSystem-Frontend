@@ -27,7 +27,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GetMyActivities from '../../utils/MyActivities.js';
 import GetUpCommingActivites from '../../utils/getUpCommingActivities.js';
-
+import { CSVLink } from 'react-csv'; 
+import Papa from 'papaparse'; 
 const Activity = () => {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -151,6 +152,39 @@ const Activity = () => {
         setDate(date);
     };
 
+
+    //csv evmsystem
+    const handleDownloadCSV = () => {
+        const csvData = activities.map(activity => ({
+            Name: activity.name,
+            Description: activity.description,
+            Venue: activity.venue ? (typeof activity.venue === 'object' ? activity.venue.name : activity.venue) : '',
+            type_Of_Activity:activity.type_of_activity,
+            Date: activity.date,
+            Start_time : activity.start_time,
+            Start_time : activity.end_time,
+
+        }));
+    
+        const headers = [
+            { label: 'Name', key: 'Name' },
+            { label: 'Description', key: 'Description' },
+            { label: 'Venue', key: 'Venue' },
+            { label: 'Type Of Activity ', key: 'typeOfActivity' },
+            { label: 'Date', key: 'Date' },
+            { label: 'Start time', key: 'Start_time' },
+            { label: 'End Timeate', key: 'Start_time' },
+        ];
+    
+        console.log(csvData);
+    
+        const csvLink = document.createElement('a');
+        csvLink.href = URL.createObjectURL(new Blob([Papa.unparse(csvData)], { type: 'text/csv' }));
+        csvLink.setAttribute('download', 'activities.csv');
+        document.body.appendChild(csvLink);
+        csvLink.click();
+        document.body.removeChild(csvLink);
+    };
     const indexOfLastActivity = currentPage * activitiesPerPage;
     const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
     const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
@@ -223,6 +257,7 @@ const Activity = () => {
                                             </Button>
 
                                         )}
+
                                         <div className="tw-flex items-center ">
                                             <Input
                                                 type="text"
@@ -239,6 +274,13 @@ const Activity = () => {
                                                     Clear
                                                 </Button>
                                             )}
+
+                                            <div>
+                                                {/* Button to trigger CSV download */}
+                                                {activities.length > 0 && (
+                                                    <Button onClick={handleDownloadCSV} className="mr-2 tw-text-black">Download CSV</Button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <br>
