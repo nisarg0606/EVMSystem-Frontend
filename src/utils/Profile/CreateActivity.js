@@ -13,7 +13,7 @@ const CreateActivity = async (activityData) => {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(activityData)
+    body: activityData
   };
 
   try {

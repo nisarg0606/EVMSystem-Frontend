@@ -69,7 +69,7 @@ const CardsFooter = () => {
                   {currentVenues.map(venue => (
                     <CardMain
                       key={venue._id}
-                      imageSrc={venue.imagesURL[0]}
+                      imageSrc={venue.imageURL}
                       title={venue.name}
                       id={venue._id}
                       capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
@@ -101,7 +101,7 @@ const CardsFooter = () => {
                   {currentActivities.map(activity => (
                     <CardMain
                       key={activity._id}
-                      imageSrc={activity.imagesURL[0]}
+                      imageSrc={activity.imageURL}
                       title={activity.name}
                       id={activity._id}
                       date={activity.date}

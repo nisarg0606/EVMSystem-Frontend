@@ -1,6 +1,6 @@
 const BASE_URL = "http://localhost:5000/";
 
-const Disable2fa = async (flag)  => {
+const Disable2fa = async ()  => {
     const token = localStorage.getItem("token");
     
     if (!token) {
@@ -8,12 +8,12 @@ const Disable2fa = async (flag)  => {
     }
 
     return fetch(`${BASE_URL}users/disable2fa`, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ '2fa': flag })
+        
     })
     .then(response => {
         if (!response.ok) {
