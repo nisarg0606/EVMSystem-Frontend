@@ -21,7 +21,7 @@ import Home from "views/examples/Home";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <BrowserRouter basename="/">
+  <BrowserRouter>
     <Routes>
       <Route path="/" exact element={<Index />} />
       <Route path="/landing" exact element={<Landing />} />

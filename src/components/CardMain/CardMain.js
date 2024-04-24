@@ -229,8 +229,7 @@ const CardMain = ({
                     )}
                   </>
                 )}
-
-                {userRole !== "customer" && (
+                {userRole === "venueOwner/eventPlanner" && (
                   <>
                     {cardType === "activity" && (
                       <Button onClick={() => handleCsvDownload(id, "activity")}>
