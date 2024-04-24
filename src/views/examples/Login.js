@@ -27,6 +27,7 @@ import LoginApi from "../../utils/LoginApi.js";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ReCAPTCHA } from "react-google-recaptcha";
+import Popup from "../../components/PopUpModel.js";
 
 const Login = () => {
   const mainRef = useRef(null);
@@ -45,6 +46,7 @@ const Login = () => {
   const [resetPasswordEmail, setResetPasswordEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [recaptchaValue, setRecaptchaValue] = useState("");
+  const [popup, setPopup] = useState(null);
 
   const toggle = () => setModal(!modal);
 
@@ -53,17 +55,28 @@ const Login = () => {
       const response = await LoginApi({ email, password, code });
       if (response.message === "Invalid code") {
         setIs2FARequired(true);
-        toast.error(error.message)
+        showNotification('error', 'Invalid code');
       } else {
-        toast.success(response);
         window.location.href = "/";
+        setError("Login Success, Welcome...");
+        showNotification('success', response.message);
       }
     } catch (error) {
       setError("Login failed. Please check your credentials.");
-      toast.error(error.message + " invalid code")
+      showNotification('error', 'Login failed. Please check your credentials.');
+      console.log("login failed")
     }
   };
 
+  const showNotification = (type, message) => {
+    setPopup({ type, message });
+    setTimeout(() => {
+      setPopup(null);
+    }, 2000);
+  };
+  const closePopup = () => {
+    setPopup(null);
+  };
   const handleRecaptchaChange = (value) => {
     setRecaptchaValue(value);
   };
@@ -227,6 +240,13 @@ const Login = () => {
               </Col>
             </Row>
           </Container>
+          {popup && (
+        <Popup
+          type={popup.type}
+          message={popup.message}
+          onClose={() => setPopup(null)}
+        />
+      )}
         </section>
       </main>
       <SimpleFooter />
@@ -260,6 +280,7 @@ const Login = () => {
         sitekey="YOUR_RECAPTCHA_SITE_KEY"
         onChange={handleRecaptchaChange}
       />
+      
     </>
   );
 };

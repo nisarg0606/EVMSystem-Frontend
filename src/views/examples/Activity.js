@@ -26,7 +26,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GetMyActivities from '../../utils/MyActivities.js';
-import GetUpCommingActivites from 'utils/getUpCommingActivities.js';
+import GetUpCommingActivites from '../../utils/getUpCommingActivities.js';
 
 const Activity = () => {
     const [activities, setActivities] = useState([]);
@@ -297,7 +297,9 @@ const Activity = () => {
                                 </ul>
                             </nav>
                         </Container>
+                       
                     )}
+                    
                 </section>
                 <Modal isOpen={modal} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal}>Create Activity</ModalHeader>
@@ -334,7 +336,8 @@ const Activity = () => {
                                     <Button onClick={handleClick}>Book venues</Button>
                                     <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                         <DropdownToggle caret>
-                                            Dropdown
+                                            
+                                            Select Venue
                                         </DropdownToggle>
                                         <DropdownMenu>
                                             {dropdownItems.map((item, index) => (
