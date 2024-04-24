@@ -94,7 +94,7 @@ const Venue = () => {
       const response = await createVenue(venueData);
       console.log(response);
       toast.success("Venue Created successfully");
-      
+
     } catch (error) {
       console.error("Error creating venue:", error);
       toast.error("Failed to Created venue", error);
@@ -279,7 +279,8 @@ const Venue = () => {
                       capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
                       availability={venue.availability}
                       description={`${venue.description} Location: ${venue.location} Capacity: ${venue.capacity}`}
-                      location={`Location: ${venue.location}`}
+                      location={` ${venue.location}`}
+                      price={`${venue.pricePerHour}`}
                       // venueOwner={`Venue Owner: ${venue.venueOwner.username}`}
                       venueOwnerEmail={`Owner Email: ${venue.venueOwner.email}`}
                       cardType={'venue'}
