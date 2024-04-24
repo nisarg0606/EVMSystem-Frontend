@@ -10,6 +10,7 @@ import ShowBookingModel from '../../components/CardMain/ShowBookingModel.js';
 import BookingModal from '../../components/CardMain/ShowBookingModel.js';
 import BookSlotModel from './ShowBookSlotModel.js';
 import BookActivityModel from './ShowBookingActivityModel.js';
+import Popup from 'components/PopUpModel.js';
 
 const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, price, start_time, end_time, status }) => {
   const [expanded, setExpanded] = useState(false);
@@ -21,6 +22,8 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
   const [isMobile, setIsMobile] = useState(false);
   const [venueId, setVenueId] = useState("");
   const userRole = localStorage.getItem('role')
+  const [popup, setPopup] = useState(null);
+  const [error, setError] = useState(null);
 
   const fields = [
     { name: "name", label: "Title" },
@@ -84,30 +87,32 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
     localStorage.removeItem('activityID');
   };
 
-  
-const handleDelete = async (id, isVenue) => {
-  try {
-    let response;
-    if (isVenue) {
-      response = await DeleteVenue(id);
-      console.log("Venue Deleted");
-      toast.success("Venue deleted successfully");
-    } else {
-      response = await DeleteActivity(id);
-      console.log("Activity Deleted");
-      toast.success("Activity deleted successfully");
-    }
-    window.location.reload();
-  } catch (error) {
-    if (isVenue) {
-      console.log("Venue Deleting failed.");
-      toast.error("Failed to delete venue: " + error.message);
-    } else {
-      console.log("DeleteActivity Deleting failed.");
-      toast.error("Failed to delete activity: " + error.message);
+
+  const handleDelete = async (id, isVenue) => {
+    try {
+      let response;
+      if (isVenue) {
+        response = await DeleteVenue(id);
+        console.log("Venue Deleted");
+        toast.success("Venue deleted successfully");
+      } else {
+        response = await DeleteActivity(id);
+        console.log("Activity Deleted");
+        toast.success("Activity deleted successfully");
+        setError("Activity deleted successfully");
+        showNotification('success', 'Activity deleted successfully');
+      }
+      window.location.reload();
+    } catch (error) {
+      if (isVenue) {
+        console.log("Venue Deleting failed.");
+        toast.error("Failed to delete venue: " + error.message);
+      } else {
+        console.log("DeleteActivity Deleting failed.");
+        toast.error("Failed to delete activity: " + error.message);
+      }
     }
   }
-}
 
   const initialValues = {
     name: title,
@@ -126,10 +131,24 @@ const handleDelete = async (id, isVenue) => {
     return () => window.removeEventListener('resize', updateIsMobile);
   }, []);
 
+
+  const showNotification = (type, message) => {
+    setPopup({ type, message });
+    setTimeout(() => {
+      setPopup(null);
+    }, 2000);
+  };
+
   return (
     <Container className='container-lg'>
       <div className="tw-bg-white tw-border tw-border-gray-200 tw-rounded-lg tw-shadow-md tw-dark:bg-gray-800 tw-dark:border-gray-700 tw-flex tw-min-h-full overflow-hidden hover:tw-shadow-lg tw-mb-4 tw-relative">
-
+      {popup && (
+          <Popup
+            type={popup.type}
+            message={popup.message}
+            onClose={() => setPopup(null)}
+          />
+        )}
         {!isMobile && (
           <div className="tw-flex-shrink-0 tw-relative">
             <img className="tw-object-cover tw-w-32 tw-h-full" src={imageSrc} alt="" />
@@ -141,7 +160,7 @@ const handleDelete = async (id, isVenue) => {
             <div className="tw-flex tw-justify-between tw-items-center">
               <h5 className="tw-mb-2 tw-text-lg tw-font-semibold tw-tracking-tight tw-text-gray-900 dark:text-white">{title}</h5>
               <div className="tw-flex tw-justify-between tw-items-center">
-                {cardType === 'venue' &&  (
+                {cardType === 'venue' && (
                   <>
                     {userRole !== 'customer' && (
                       <>
@@ -223,27 +242,27 @@ const handleDelete = async (id, isVenue) => {
             )}
             {expanded && venueOwnerEmail && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {venueOwnerEmail}
+              {venueOwnerEmail}
               </div>
             )}
             {expanded && date && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {date}
+                Date :{date}
               </div>
             )}
             {expanded && price && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {price}
+                price : ${price}
               </div>
             )}
             {expanded && start_time && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {start_time}
+               Start Time :{start_time}
               </div>
             )}
             {expanded && end_time && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
-                {end_time}
+               End Time :{end_time}
               </div>
             )}
             {expanded && status && (
@@ -328,6 +347,8 @@ const handleDelete = async (id, isVenue) => {
         {ShowBookingActivity && (
           <BookActivityModel onClose={handleCloseShowBookingActivity} id={localStorage.getItem("activityID")} />
         )}
+
+        
       </div>
       <ToastContainer />
     </Container>

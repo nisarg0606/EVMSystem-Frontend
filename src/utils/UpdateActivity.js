@@ -21,7 +21,7 @@ const updateActivity = async (id, data) => {
     }
 
     console.log("Activity updated successfully");
-    window.location.reload();
+    // window.location.reload();
     return response.json();
   } catch (error) {
     console.error('Error updating activity:', error);

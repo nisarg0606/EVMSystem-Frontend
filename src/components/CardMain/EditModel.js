@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import updateVenue from '../../utils/UpdateVenue.js';
-import updateActivity from '../../utils/UpdateActivity.js'; 
+import updateActivity from '../../utils/UpdateActivity.js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import fetchActivities from 'utils/MyActivities.js';
+import Popup from 'components/PopUpModel.js';
 
-const EditModal = ({ fields, initialValues, onClose, type }) => { 
+const EditModal = ({ fields, initialValues, onClose, type }) => {
   const [formData, setFormData] = useState(initialValues);
   const [error, setError] = useState(null);
+  const [popup, setPopup] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,15 +26,21 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
         const venueId = localStorage.getItem('venueID');
         const response = await updateVenue(venueId, formData);
         toast.success("Venue updated successfully");
-        console.log("Venue updated successfully"+response);
+        console.log("Venue updated successfully" + response);
       } else if (type === 'activity') {
         const activityId = localStorage.getItem('activityID');
         await updateActivity(activityId, formData);
         toast.success("Activity updated successfully");
         console.log("Activity updated successfully");
+        setError("Activity updated successfully");
+        showNotification('success', 'Activity updated successfully.');
+        // alert("Activity updated successfully")
       }
-      // window.location.reload();
+
+      window.location.reload();
       fetchActivities();
+      setError("Activity updated successfully");
+      showNotification('success', 'Activity updated successfully.');
       onClose();
     } catch (error) {
       setError(error.message);
@@ -40,6 +48,15 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
 
     }
   };
+
+
+  const showNotification = (type, message) => {
+    setPopup({ type, message });
+    setTimeout(() => {
+      setPopup(null);
+    }, 2000);
+  };
+
 
   return (
     <div className="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-75 tw-z-50">
@@ -58,8 +75,15 @@ const EditModal = ({ fields, initialValues, onClose, type }) => {
             <button type="submit" className="tw-py-2 tw-px-4 tw-bg-blue-600 tw-text-white tw-rounded-md tw-hover:bg-blue-700 tw-focus:outline-none tw-focus:ring-2 tw-focus:ring-blue-500">Save Changes</button>
           </div>
         </form>
+        <ToastContainer />
+        {popup && (
+          <Popup
+            type={popup.type}
+            message={popup.message}
+            onClose={() => setPopup(null)}
+          />
+        )}
       </div>
-      <ToastContainer/>
 
     </div>
   );
