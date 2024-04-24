@@ -3,6 +3,9 @@ import ShowBooking from '../../utils/ShowBooking';
 import AvailabelSlot from '../../utils/AvailabelBookSlot';
 import BookSlot from '../../utils/BookSlot';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Popup from "../../components/PopUpModel.js";
 
 import {
     Spinner,
@@ -31,7 +34,9 @@ const BookSlotModel = ({ id, onClose }) => {
         cvv: ''
     });
     const [showCardDetailsForm, setShowCardDetailsForm] = useState(false);
-    const [price, setPrice] = useState(0); // State for holding the price
+    const [price, setPrice] = useState("");
+    const [doublePrice, setDoublePrice] = useState(false); 
+    const [popup, setPopup] = useState(null);
 
     useEffect(() => {
         const fetchBookingData = async () => {
@@ -49,32 +54,42 @@ const BookSlotModel = ({ id, onClose }) => {
     }, [id]);
 
     useEffect(() => {
-        // Calculate price based on selected slots
         const calculatePrice = () => {
-            const basePrice = 10; // Base price for one slot
-            const additionalPricePerSlot = 5; // Additional price per slot
-
-            const totalPrice = basePrice + additionalPricePerSlot * selectedSlots.length;
+            let totalPrice = 0;
+            selectedSlots.forEach(slot => {
+                const [from, to] = slot.split(' - ');
+                const slotPrice = availableSlots.find(s => s.from === from && s.to === to)?.price || 0;
+                totalPrice += slotPrice;
+            });
+            if (doublePrice) {
+                totalPrice *= 2;
+            }
             setPrice(totalPrice);
         };
 
         calculatePrice();
-    }, [selectedSlots]);
+    }, [selectedSlots, doublePrice, availableSlots]);
 
-    const handleDateChange = (event) => {
-        const selectedDate = new Date(event.target.value);
-        setSelectedDate(selectedDate);
+    const handleDateChange = (e) => {
+        const selectedDate = new Date(e.target.value);
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}`;
+        setSelectedDate(formattedDate);
     };
 
     const handleSubmit = async () => {
         try {
-            const date = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
+            const date = selectedDate;
             if (date) {
                 const bookedSlotData = await AvailabelSlot(id, date);
-
+                console.log(bookedSlotData.availableSlots[0].price)
                 if (bookedSlotData && bookedSlotData.availableSlots) {
                     setAvailableSlots(bookedSlotData.availableSlots);
                     setNoSlotsMessage(null);
+                    setPrice(bookedSlotData.availableSlots[0].price)
                 } else {
                     setAvailableSlots([]);
                     setNoSlotsMessage('No slots available');
@@ -89,15 +104,20 @@ const BookSlotModel = ({ id, onClose }) => {
 
     const handleCheckboxChange = (from, to) => {
         const slotDate = `${from} - ${to}`;
-
-        setSelectedSlots((prevSelectedSlots) => {
+        const slotPrice = availableSlots.find(s => s.from === from && s.to === to)?.price || 0;
+    
+        setSelectedSlots(prevSelectedSlots => {
             if (prevSelectedSlots.includes(slotDate)) {
-                return prevSelectedSlots.filter((date) => date !== slotDate);
+                setPrice(prevPrice => prevPrice - slotPrice);
+                return prevSelectedSlots.filter(date => date !== slotDate);
             } else {
+                setPrice(prevPrice => prevPrice + slotPrice);
                 return [...prevSelectedSlots, slotDate];
             }
         });
+    
     };
+    
 
     const handleBookSlot = async () => {
         setShowFakePaymentModal(true);
@@ -111,11 +131,12 @@ const BookSlotModel = ({ id, onClose }) => {
     const handleConfirmFakePayment = async () => {
         try {
             setLoading(true);
-            const selectedDateString = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
+            const selectedDateString = selectedDate;
             if (selectedDateString && selectedSlots.length > 0) {
                 const response = await BookSlot(selectedDateString, selectedSlots, id);
-                alert('Booking successful:', response);
                 onClose();
+                // setError("Payment Successfully done");
+                // showNotification('success', 'Payment Successfully done');
             } else {
                 console.log('Please select a date and at least one slot before booking.');
             }
@@ -143,6 +164,17 @@ const BookSlotModel = ({ id, onClose }) => {
     const validateCardDetails = (cardDetails) => {
         return cardDetails.cardNumber !== '' && cardDetails.expiryDate !== '' && cardDetails.cvv !== '';
     };
+
+    
+  const showNotification = (type, message) => {
+    setPopup({ type, message });
+    setTimeout(() => {
+      setPopup(null);
+    }, 2000);
+  };
+  const closePopup = () => {
+    setPopup(null);
+  };
 
     if (loading) {
         return (
@@ -304,6 +336,13 @@ const BookSlotModel = ({ id, onClose }) => {
                 </Modal>
 
             </div>
+            {popup && (
+            <Popup
+              type={popup.type}
+              message={popup.message}
+              onClose={() => setPopup(null)}
+            />
+          )}
         </div>
     );
 };

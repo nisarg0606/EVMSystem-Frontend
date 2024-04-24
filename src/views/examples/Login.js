@@ -109,6 +109,19 @@ const Login = () => {
       <main ref={mainRef}>
         <section className="section section-shaped section-lg">
           <div className="shape shape-style-1 bg-gradient-default">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+
+          </div> 
+          <div className="shape shape-style-1 bg-gradient-default">
+                        <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+
             {[...Array(8)].map((_, index) => (
               <span key={index} />
             ))}
@@ -122,7 +135,7 @@ const Login = () => {
                       <small>Sign in with</small>
                     </div>
                     <div className="btn-wrapper text-center">
-                     
+
                       <GoogleLogin
                         clientId="YOUR_GOOGLE_CLIENT_ID"
                         buttonText="Login with Google"
@@ -241,12 +254,12 @@ const Login = () => {
             </Row>
           </Container>
           {popup && (
-        <Popup
-          type={popup.type}
-          message={popup.message}
-          onClose={() => setPopup(null)}
-        />
-      )}
+            <Popup
+              type={popup.type}
+              message={popup.message}
+              onClose={() => setPopup(null)}
+            />
+          )}
         </section>
       </main>
       <SimpleFooter />
@@ -280,7 +293,7 @@ const Login = () => {
         sitekey="YOUR_RECAPTCHA_SITE_KEY"
         onChange={handleRecaptchaChange}
       />
-      
+
     </>
   );
 };
