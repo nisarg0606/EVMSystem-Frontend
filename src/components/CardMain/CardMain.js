@@ -156,7 +156,7 @@ const handleDelete = async (id, isVenue) => {
                   </>
                 )}
 
-                {cardType === 'venue' && (
+                {cardType === 'venue' && token && (
                   <Button
                     onClick={() => handleBookSlot(id, 'venue')}
                   >
