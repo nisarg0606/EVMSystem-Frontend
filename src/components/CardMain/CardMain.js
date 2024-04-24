@@ -6,13 +6,17 @@ import DeleteVenue from '../../utils/DeleteVenue.js';
 import DeleteActivity from '../../utils/DeleteActivity.js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ShowBookingModel from '../../components/CardMain/ShowBookingModel.js';
+import BookingModal from '../../components/CardMain/ShowBookingModel.js';
 
 const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType,date,time,status }) => {
   const [expanded, setExpanded] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
   const token = localStorage.getItem("token");
   const [isMobile, setIsMobile] = useState(false);
   const [venueId, setVenueId] = useState("");
+  
   const fields = [
     { name: "name", label: "Title" },
     { name: "description", label: "Description" },
@@ -28,6 +32,19 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
       localStorage.setItem('venueID', id);
       console.log("Venue ID set:", id);
     }
+  };
+
+  const handleShowBooking = async (id, type) => {
+    setShowBookingModal(true);
+    if (type === 'venue') {
+      localStorage.setItem('venueID', id);
+      console.log("Venue ID set:", id);
+    }
+  };
+
+  const handleCloseShowBookingModal = () => {
+    setShowBookingModal(false);
+    localStorage.removeItem('venueID');
   };
 
   const handleCloseModal = () => {
@@ -65,6 +82,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
     location: location,
     id: venueId
   }
+  
   useLayoutEffect(() => {
     function updateIsMobile() {
       setIsMobile(window.innerWidth <= 768);
@@ -87,7 +105,17 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
 
         <div className="tw-p-4 tw-flex-1 tw-flex tw-flex-col tw-justify-between">
           <div>
+          <div className="tw-flex tw-justify-between tw-items-center">
             <h5 className="tw-mb-2 tw-text-lg tw-font-semibold tw-tracking-tight tw-text-gray-900 dark:text-white">{title}</h5>
+            {cardType === 'venue' && (
+                  <Button
+                  className="tw-ml-2 tw-inline-flex tw-items-center tw-px-3 tw-py-1 tw-text-sm tw-font-medium tw-text-center tw-text-white tw-bg-blue-600 tw-rounded-lg tw-hover:bg-green-700 tw-focus:ring-4 tw-focus:outline-none tw-focus:ring-green-300 dark:bg-green-700 dark:hover:bg-green-800 dark:focus:ring-green-800"
+                  onClick={() => handleShowBooking(id, 'venue')}
+                  >
+                    Show booking
+                  </Button>)}
+                  </div>
+
             <div className="tw-flex tw-items-center">
               {/* Render either Availability Tag or Activity Type Tag */}
               {availability && !activityType && (
@@ -100,6 +128,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                   {availability}
                 </span>
               )}
+              
               {activityType && !availability && (
                 <div className=" tw-top-2 tw-right-2 tw-text-xs tw-font-medium tw-rounded-full text-white tw-bg-green-500 tw-px-2 tw-py-0.5">
                   {activityType}
@@ -173,6 +202,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                   >
                     Edit
                   </Button>)}
+                  
                 {cardType === 'activity' && (
                   <Button
                     className="tw-ml-2 tw-inline-flex tw-items-center tw-px-3 tw-py-1 tw-text-sm tw-font-medium tw-text-center tw-text-white tw-bg-green-600 tw-rounded-lg tw-hover:bg-green-700 tw-focus:ring-4 tw-focus:outline-none tw-focus:ring-green-300 dark:bg-green-700 dark:hover:bg-green-800 dark:focus:ring-green-800"
@@ -208,6 +238,10 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
         </div>
         {showEditModal && (
           <EditModal fields={fields} initialValues={initialValues} onClose={handleCloseModal} type={cardType} />
+
+        )}
+        {showBookingModal && (
+          <BookingModal onClose={handleCloseShowBookingModal} id={localStorage.getItem("venueID")} />
 
         )}
       </div>

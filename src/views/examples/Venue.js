@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Spinner, Button, Row, Col, Input } from 'reactstrap';
+import {
+  Card, Container, Spinner, Button, Row, Col, Input, Form,
+  FormGroup,
+  Label,
+  Alert, Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import CardMain from 'components/CardMain/CardMain';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
 import SimpleFooter from 'components/Footers/SimpleFooter';
 import fetchVenues from '../../utils/FetchVenues';
-import CreateVenueModal from '../../components/CardMain/venue/CreateVenueModal.js';
-import CreateVenue from '../../utils/CreateVenue';
-
+import createVenue from '../../utils/CreateVenue';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import GetMyVenues from '../../utils/MyVenues';
 const Venue = () => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,12 +20,92 @@ const Venue = () => {
   const [venuesPerPage] = useState(3);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [venueData, setVenueData] = useState({
+    name: "",
+    description: "",
+    capacity: 0,
+    location: "",
+    image: null,
+    type: "",
+    price: 0,
+    timings: [],
+  });
+  const toggle = () => setModal(!modal);
 
+  const [newDay, setNewDay] = useState("");
+  const [newSlot, setNewSlot] = useState({ from: "", to: "" });
+
+  useEffect(() => {
+    if (newDay) {
+      const dayExists = venueData.timings.some((day) => day.day === newDay);
+      if (!dayExists) {
+        setVenueData({
+          ...venueData,
+          timings: [...venueData.timings, { day: newDay, slots: [] }],
+        });
+      }
+    }
+  }, [newDay]);
+
+  const handleRemoveSlot = (dayIndex, slotIndex) => {
+    const updatedTimings = [...venueData.timings];
+    updatedTimings[dayIndex].slots.splice(slotIndex, 1);
+    setVenueData({
+      ...venueData,
+      timings: updatedTimings,
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setVenueData({
+      ...venueData,
+      [name]: value,
+    });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setVenueData({
+      ...venueData,
+      image: file,
+    });
+  };
+
+
+
+  const handleAddSlot = (dayIndex) => {
+    const updatedTimings = [...venueData.timings];
+    updatedTimings[dayIndex].slots.push(newSlot);
+    setVenueData({
+      ...venueData,
+      timings: updatedTimings,
+    });
+    setNewSlot({ from: "", to: "" });
+  };
+
+  const handleSubmit = async (venueData) => {
+    try {
+      setModalLoading(true);
+
+      const response = await createVenue(venueData);
+      console.log(response);
+      toast.success("Venue Created successfully");
+
+    } catch (error) {
+      console.error("Error creating venue:", error);
+      toast.error("Failed to Created venue",error);
+
+    } finally {
+      setModalLoading(false);
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const venuesResponse = await fetchVenues();
+        const venuesResponse = await GetMyVenues();
         setVenues(Object.values(venuesResponse.venues));
       } catch (error) {
         console.error(error);
@@ -32,16 +118,9 @@ const Venue = () => {
   }, []);
 
   const handleCreateVenue = () => {
-    setModalOpen(true);
+    setModal(true);
   };
 
-  const handleSubmitVenue = async (venueData) => {
-    try {
-      const createVenue = await CreateVenue(venueData);
-    } catch (error) {
-      console.error('Error creating venue:', error.message);
-    }
-  };
 
   const handleSearchButtonClick = async () => {
     if (searchQuery.trim() !== '') {
@@ -148,7 +227,7 @@ const Venue = () => {
                       <Button onClick={handleSearchButtonClick} className="mr-2 tw-text-white" >
                         Search
                       </Button>
-                      {searchQuery && ( 
+                      {searchQuery && (
                         <Button onClick={handleClearSearch} className="mr-2 tw-text-white">
                           Clear
                         </Button>
@@ -161,7 +240,7 @@ const Venue = () => {
                     searchResults.map(result => (
                       <CardMain
                         key={result._id}
-                        imageSrc={result.imagesURL[0]}
+                        imageSrc={result.imageURL}
                         title={result.name}
                         capacity={`Capacity: ${result.capacity}, Location: ${result.location}, Type: ${result.type}, Price Per Hour: ${result.pricePerHour}`}
                         availability={result.availability}
@@ -177,7 +256,7 @@ const Venue = () => {
                     currentVenues.map(venue => (
                       <CardMain
                         key={venue._id}
-                        imageSrc={venue.imagesURL[0]}
+                        imageSrc={venue.imageURL}
                         title={venue.name}
                         capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
                         availability={venue.availability}
@@ -212,7 +291,168 @@ const Venue = () => {
       <SimpleFooter />
 
       {/* Create Venue Modal */}
-      <CreateVenueModal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} handleSubmit={handleSubmitVenue} />
+      <Modal isOpen={modal} toggle={toggle} >
+        <ModalHeader toggle={toggle} >Create Venue</ModalHeader>
+        <ModalBody className="tw-bg-white">
+        {modalLoading ? (
+                                <div className="text-center">
+                                    <p>Loading...</p>
+                                    <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+                                </div>
+                            ) : (
+          <Form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label for="name">Name:</Label>
+              <Input
+                type="text"
+                name="name"
+                id="name"
+                value={venueData.name}
+                onChange={handleChange}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label for="description">Description:</Label>
+              <Input
+                type="textarea"
+                name="description"
+                id="description"
+                value={venueData.description}
+                onChange={handleChange}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label for="capacity">Capacity:</Label>
+              <Input
+                type="number"
+                name="capacity"
+                id="capacity"
+                value={venueData.capacity}
+                onChange={handleChange}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label for="location">Location:</Label>
+              <Input
+                type="text"
+                name="location"
+                id="location"
+                value={venueData.location}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="type">Type:</Label>
+              <Input
+                type="text"
+                name="type"
+                id="type"
+                value={venueData.type}
+                onChange={handleChange}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label for="price">Price Per Hour:</Label>
+              <Input
+                type="number"
+                name="price"
+                id="price"
+                value={venueData.price}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="newDay">Select Day:</Label>
+              <Input
+                type="select"
+                name="newDay"
+                id="newDay"
+                value={newDay}
+                onChange={(e) => setNewDay(e.target.value)}
+              >
+                <option value="">Select Day</option>
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday">Sunday</option>
+              </Input>
+            </FormGroup>
+
+            {venueData.timings.map((day, dayIndex) => (
+              <div key={dayIndex}>
+                <h4>{day.day}</h4>
+                {day.slots.map((slot, slotIndex) => (
+                  <div key={slotIndex}>
+                    <Input
+                      type="text"
+                      value={slot.from}
+                      onChange={(e) => {
+                        const updatedTimings = [...venueData.timings];
+                        updatedTimings[dayIndex].slots[slotIndex].from = e.target.value;
+                        setVenueData({
+                          ...venueData,
+                          timings: updatedTimings,
+                        });
+                      }}
+                      placeholder="From"
+                    />
+                    {" - "}
+                    <Input
+                      type="text"
+                      value={slot.to}
+                      onChange={(e) => {
+                        const updatedTimings = [...venueData.timings];
+                        updatedTimings[dayIndex].slots[slotIndex].to = e.target.value;
+                        setVenueData({
+                          ...venueData,
+                          timings: updatedTimings,
+                        });
+                      }}
+                      placeholder="To"
+                    />
+
+                    <Button color="danger" className='tw-text-black tw-mt-2 mb-2' onClick={() => handleRemoveSlot(dayIndex, slotIndex)}>
+                      Remove Slot
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  color="primary"
+                  className='tw-text-black'
+                  onClick={() => handleAddSlot(dayIndex)}
+                >
+                  Add Slot
+                </Button>
+              </div>
+            ))}
+            <FormGroup>
+              <Label for="image">Image:</Label>
+              <Input
+                type="file"
+                name="image"
+                id="image"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </FormGroup>
+          </Form>
+                            )}
+        </ModalBody>
+        <ModalFooter className="tw-bg-gray-200">
+          <Button color="tw-primary" onClick={() => handleSubmit(venueData)} className="tw-hover:bg-blue-700 tw-text-black tw-font-bold tw-py-1 tw-px-2 tw-rounded mr-2">Submit</Button>{' '}
+          <Button color="tw-secondary" onClick={toggle} className="tw-hover:bg-gray-400 tw-text-gray-700 tw-font-bold tw-py-1 tw-px-2 tw-rounded">Cancel</Button>
+        </ModalFooter>
+      </Modal>
+      <ToastContainer />
+
     </>
   );
 };

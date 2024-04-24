@@ -1,32 +1,44 @@
+
 const BASE_URL = "http://localhost:5000/";
 
 const createVenue = async (venueData) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   if (!token) {
     throw new Error("Token not found in local storage.");
   }
-  console.log(venueData)
+
+  const formData = new FormData();
+  Object.entries(venueData).forEach(([key, value]) => {
+    if (key === "timings") {
+      value.forEach((timing) => {
+        formData.append("timings", JSON.stringify(timing));
+      });
+    } else {
+      formData.append(key, value);
+    }
+  });
 
   const requestOptions = {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(venueData)
+    body: formData,
   };
 
   try {
+    console.log("Request Options", requestOptions);
     const response = await fetch(`${BASE_URL}venues`, requestOptions);
     if (!response.ok) {
-      throw new Error(`Failed to create venue: ${response.status}`);
+      console.error("Failed to create venue:", response);
+      throw new Error("Failed to create venue");
     }
     console.log("Venue created successfully");
     return response.json();
   } catch (error) {
-    console.error('Error creating venue:', error);
-    throw error; 
+    console.error("Error creating venue:", error);
+    throw error;
   }
 };
 

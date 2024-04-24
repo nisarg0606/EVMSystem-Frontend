@@ -1,18 +1,12 @@
 const BASE_URL = "http://localhost:5000/";
-const token = localStorage.getItem('token')
+const token = localStorage.getItem("token");
 
-const fetchVenues = (name, description) => {
-    const url = new URL(`${BASE_URL}venues/myvenues`);
-    if (name && description) {
-        url.pathname += '/search';
-        url.searchParams.append('name', name);
-        url.searchParams.append('description', description);
-    }
-
-    return fetch(url.toString(), {
+const GetMyActivities = () => {
+    
+    return fetch(`${BASE_URL}activities/myactivities`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
             "Content-Type": "application/json"
         }
     })
@@ -26,6 +20,6 @@ const fetchVenues = (name, description) => {
         console.error("Error fetching venues:", error.message);
         throw error;
     });
-};
+}
 
-export default fetchVenues;
+export default GetMyActivities ;

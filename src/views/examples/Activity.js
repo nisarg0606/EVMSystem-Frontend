@@ -1,61 +1,85 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Container, Spinner, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap';
+import {
+    Card,
+    Container,
+    Spinner,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    Form,
+    FormGroup,
+    Label,
+    Input
+} from 'reactstrap';
 import CardMain from 'components/CardMain/CardMain';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
 import SimpleFooter from 'components/Footers/SimpleFooter';
 import GetAllActivities from '../../utils/GetAllActivites.js';
-import CreateActivity from 'utils/Profile/CreateActivity.js';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import GetMyActivities from '../../utils/MyActivities.js';
 
 const Activity = () => {
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [activitiesPerPage] = useState(3);
-
-    // State for modal
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [venue, setVenue] = useState('');
+    const [typeOfActivity, setTypeOfActivity] = useState('');
+    const [date, setDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [participantsLimit, setParticipantsLimit] = useState('');
+    const [price, setPrice] = useState('');
+    const [image, setImage] = useState(null);
+    
+    const [modalLoading, setModalLoading] = useState(false);
+    
     const [modal, setModal] = useState(false);
     const toggleModal = () => setModal(!modal);
-
-    // State for form data
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        venue: '',
-        type_of_activity: '',
-        date: '',
-        start_time: '',
-        end_time: '',
-        participants_limit: '',
-        price: '',
-        image: null, 
-    });
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setFormData({ ...formData, images: file });
-    };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setModalLoading(true);
+        
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', description);
+        formData.append('venue', venue);
+        formData.append('type_of_activity', typeOfActivity);
+        formData.append('date', date);
+        formData.append('start_time', startTime);
+        formData.append('end_time', endTime);
+        formData.append('participants_limit', participantsLimit);
+        formData.append('price', price);
+        formData.append('image', image);  // File upload
+        
         try {
-            const createVenue = await CreateActivity(formData)
-            console.log(createVenue)
-          } catch (error) {
-            console.error('Error creating Activity:', error.message);
-          }
-        console.log(formData);
-        toggleModal();
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:5000/activities', formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            
+            toast.success("Activity Created successfully");
+            setModal(false);
+        } catch (error) {
+            toast.error(`Error: ${error.response ? error.response.data.message : error.message}`);
+        } finally {
+            setModalLoading(false);
+        }
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const activitiesResponse = await GetAllActivities();
+                const activitiesResponse = await GetMyActivities();
                 setActivities(activitiesResponse);
             } catch (error) {
                 console.error(error);
@@ -63,16 +87,12 @@ const Activity = () => {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, []);
 
-    // Get current activities
     const indexOfLastActivity = currentPage * activitiesPerPage;
     const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
     const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
-
-    // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
@@ -113,19 +133,19 @@ const Activity = () => {
                             <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
                         </div>
                     ) : (
-                    <Container>
-                        <Card className="card-profile shadow mt--300">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
-                                <Button onClick={toggleModal} className="mr-2 tw-text-black">
-                                    Create Activity
-                                </Button>
+                        <Container>
+                            <Card className="card-profile shadow mt--300">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
+                                    <Button onClick={toggleModal} className="mr-2 tw-text-black">
+                                        Create Activity
+                                    </Button>
 
-                                <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
-                                {currentActivities.map((activity) => (
+                                    <h1 className='tw-text-xl lg:tw-text-2xl tw-font-serif tw-font-bold tw-text-center tw-text-white tw-my-4'>Activities</h1>
+                                    {currentActivities.map((activity) => (
                                         <CardMain
                                             key={activity._id}
                                             // Assuming imagesURL is an array of image URLs
-                                            imageSrc={activity.imagesURL[0]}
+                                            imageSrc={activity.imageURL}
                                             title={activity.name}
                                             description={`${activity.description} Type: ${activity.type_of_activity}`}
                                             venue={`Venue: ${activity.venue ? activity.venue.name : 'To be announced'}`}
@@ -138,74 +158,144 @@ const Activity = () => {
                                             id={activity._id}
                                         />
                                     ))}
-                            </div>
-                        </Card>
-                        {/* Pagination */}
-                        <nav className="mt-4">
-                            <ul className="pagination justify-content-center">
-                                {[...Array(Math.ceil(activities.length / activitiesPerPage)).keys()].map((number) => (
-                                    <li key={number} className="page-item">
-                                        <Button onClick={() => paginate(number + 1)} className="page-link">
-                                            {number + 1}
-                                        </Button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </Container>
+                                </div>
+                            </Card>
+                            {/* Pagination */}
+                            <nav className="mt-4">
+                                <ul className="pagination justify-content-center">
+                                    {[...Array(Math.ceil(activities.length / activitiesPerPage)).keys()].map((number) => (
+                                        <li key={number} className="page-item">
+                                            <Button onClick={() => paginate(number + 1)} className="page-link">
+                                                {number + 1}
+                                            </Button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </Container>
                     )}
                 </section>
                 <Modal isOpen={modal} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal}>Create Activity</ModalHeader>
                     <ModalBody>
-                        <Form onSubmit={handleSubmit}>
-                            <FormGroup>
-                                <Label for="name">Name</Label>
-                                <Input type="text" name="name" id="name" value={formData.name} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="description">Description</Label>
-                                <Input type="text" name="description" id="description" value={formData.description} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="venue">Venue</Label>
-                                <Input type="text" name="venue" id="venue" value={formData.venue} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="type_of_activity">Activity Type</Label>
-                                <Input type="text" name="type_of_activity" id="type_of_activity" value={formData.type_of_activity} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="date">Date</Label>
-                                <Input type="date" name="date" id="date" value={formData.date} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="start_time">Start Time</Label>
-                                <Input type="time" name="start_time" id="start_time" value={formData.start_time} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="end_time">End Time</Label>
-                                <Input type="time" name="end_time" id="end_time" value={formData.end_time} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="participants_limit">Participants Limit</Label>
-                                <Input type="number" name="participants_limit" id="participants_limit" value={formData.participants_limit} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="price">Price</Label>
-                                <Input type="text" name="price" id="price" value={formData.price} onChange={handleChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="images">Image</Label>
-                                <Input type="file" name="images" id="images" accept="images/*" onChange={handleImageChange} />
-                            </FormGroup>
-                            <Button type="submit" color="primary">Submit</Button>
-                            <Button color="secondary" onClick={toggleModal}>Close</Button>
-                        </Form>
+                        <div>
+                            {modalLoading ? (
+                                <div className="text-center">
+                                    <p>Loading...</p>
+                                    <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+                                </div>
+                            ) : (
+                            <Form onSubmit={handleSubmit}>
+                                <FormGroup>
+                                    <Label for="name">Name</Label>
+                                    <Input
+                                        type="text"
+                                        id="name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="description">Description</Label>
+                                    <Input
+                                        type="textarea"
+                                        id="description"
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="venue">Venue</Label>
+                                    <Input
+                                        type="text"
+                                        id="venue"
+                                        value={venue}
+                                        onChange={(e) => setVenue(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="typeOfActivity">Type of Activity</Label>
+                                    <Input
+                                        type="text"
+                                        id="typeOfActivity"
+                                        value={typeOfActivity}
+                                        onChange={(e) => setTypeOfActivity(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="date">Date</Label>
+                                    <Input
+                                        type="date"
+                                        id="date"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="startTime">Start Time</Label>
+                                    <Input
+                                        type="time"
+                                        id="startTime"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="endTime">End Time</Label>
+                                    <Input
+                                        type="time"
+                                        id="endTime"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="participantsLimit">Participants Limit</Label>
+                                    <Input
+                                        type="number"
+                                        id="participantsLimit"
+                                        value={participantsLimit}
+                                        onChange={(e) => setParticipantsLimit(Number(e.target.value))}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="price">Price</Label>
+                                    <Input
+                                        type="number"
+                                        id="price"
+                                        value={price}
+                                        onChange={(e) => setPrice(Number(e.target.value))}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="image">Image</Label>
+                                    <Input
+                                        type="file"
+                                        id="image"
+                                        onChange={(e) => setImage(e.target.files[0])}
+                                        required
+                                    />
+                                </FormGroup>
+                                <Button type="submit" className='tw-text-black' color="primary">Create Activity</Button>
+                            </Form>
+
+                            )}
+                        </div>
                     </ModalBody>
                 </Modal>
 
                 <SimpleFooter />
+                <ToastContainer />
+
             </main>
         </>
     );
