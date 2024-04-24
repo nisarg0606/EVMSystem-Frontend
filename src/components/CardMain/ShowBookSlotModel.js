@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ShowBooking from '../../utils/ShowBooking';
 import AvailabelSlot from '../../utils/AvailabelBookSlot';
-import BookSlot from '../../utils/BookSlot'; // Import the BookSlot function
-import DatePicker from 'react-datepicker';
+import BookSlot from '../../utils/BookSlot';
 import 'react-datepicker/dist/react-datepicker.css';
-import 'react-toastify/dist/ReactToastify.css';
 
 import {
     Spinner,
@@ -13,6 +11,9 @@ import {
     FormGroup,
     Label,
     Input,
+    Modal,
+    ModalBody,
+    ModalFooter
 } from 'reactstrap';
 
 const BookSlotModel = ({ id, onClose }) => {
@@ -20,9 +21,16 @@ const BookSlotModel = ({ id, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [availableSlots, setAvailableSlots] = useState([]); // State for available slots
-    const [selectedSlots, setSelectedSlots] = useState([]); // State for selected slots
+    const [availableSlots, setAvailableSlots] = useState([]);
+    const [selectedSlots, setSelectedSlots] = useState([]);
     const [noSlotsMessage, setNoSlotsMessage] = useState(null);
+    const [showFakePaymentModal, setShowFakePaymentModal] = useState(false);
+    const [cardDetails, setCardDetails] = useState({
+        cardNumber: '',
+        expiryDate: '',
+        cvv: ''
+    });
+    const [showCardDetailsForm, setShowCardDetailsForm] = useState(false);
 
     useEffect(() => {
         const fetchBookingData = async () => {
@@ -39,26 +47,20 @@ const BookSlotModel = ({ id, onClose }) => {
         fetchBookingData();
     }, [id]);
 
-    // Watch for changes in selectedSlots and print the array in console
-    useEffect(() => {
-        console.log('Selected Dates:', selectedSlots);
-    }, [selectedSlots]);
-
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
+    const handleDateChange = (event) => {
+        const selectedDate = new Date(event.target.value);
+        setSelectedDate(selectedDate);
     };
 
     const handleSubmit = async () => {
         try {
             const date = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
             if (date) {
-                console.log(date);
                 const bookedSlotData = await AvailabelSlot(id, date);
 
-                // Handle the response data
                 if (bookedSlotData && bookedSlotData.availableSlots) {
                     setAvailableSlots(bookedSlotData.availableSlots);
-                    setNoSlotsMessage(null); // Clear the no slots message
+                    setNoSlotsMessage(null);
                 } else {
                     setAvailableSlots([]);
                     setNoSlotsMessage('No slots available');
@@ -76,33 +78,56 @@ const BookSlotModel = ({ id, onClose }) => {
 
         setSelectedSlots((prevSelectedSlots) => {
             if (prevSelectedSlots.includes(slotDate)) {
-                // If the date is already selected, remove it from the array
                 return prevSelectedSlots.filter((date) => date !== slotDate);
             } else {
-                // Otherwise, add it to the array
                 return [...prevSelectedSlots, slotDate];
             }
         });
     };
 
     const handleBookSlot = async () => {
-        try {
-            // Get the selected date in the format YYYY-MM-DD
-            const selectedDateString = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
+        setShowFakePaymentModal(true);
+    };
 
-            // Make sure the selected date and slots are not empty
+    const handleCardDetailsChange = (event) => {
+        const { name, value } = event.target;
+        setCardDetails({ ...cardDetails, [name]: value });
+    };
+
+    const handleConfirmFakePayment = async () => {
+        try {
+            setLoading(true);
+            const selectedDateString = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
             if (selectedDateString && selectedSlots.length > 0) {
-                // Call BookSlot function with selected date, selected slots, and ID
                 const response = await BookSlot(selectedDateString, selectedSlots, id);
-                console.log('ID:', id);
-                console.log('Booking successful:', response);
-                onClose(); // Close the modal after booking
+                alert('Booking successful:', response);
+                onClose(); 
             } else {
                 console.log('Please select a date and at least one slot before booking.');
             }
         } catch (error) {
             console.log('Error booking slots:', error.message);
+        } finally {
+            setLoading(false);
         }
+    
+        try {
+            setLoading(true);
+            if (validateCardDetails(cardDetails)) {
+                console.log(' payment successful');
+                onClose();
+            } else {
+                console.log('Please enter valid card details.');
+            }
+        } catch (error) {
+            console.log('Error booking slots:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const validateCardDetails = (cardDetails) => {
+        return cardDetails.cardNumber !== '' && cardDetails.expiryDate !== '' && cardDetails.cvv !== '';
     };
 
     if (loading) {
@@ -139,13 +164,17 @@ const BookSlotModel = ({ id, onClose }) => {
                 <Form>
                     <FormGroup>
                         <Label for="datePicker">Select Date:</Label>
-                        <DatePicker
-                            selected={selectedDate}
+                        <input
+                            type="date"
+                            value={selectedDate}
                             onChange={handleDateChange}
                             className="tw-py-2 tw-px-4 tw-border tw-rounded-md tw-w-full"
-                            placeholderText="Choose a date"
                         />
+
                     </FormGroup>
+                    {selectedDate && (
+                        <h1>Selected Date: {new Date(selectedDate).toLocaleDateString()}</h1>
+                    )}
                     <div className="tw-flex tw-justify-between tw-mt-4">
                         <Button
                             color="primary"
@@ -164,7 +193,6 @@ const BookSlotModel = ({ id, onClose }) => {
                     </div>
                 </Form>
 
-                {/* Display available slots with checkboxes */}
                 {availableSlots.length > 0 && (
                     <div className="tw-mt-4">
                         <h3>Available Slots:</h3>
@@ -186,9 +214,9 @@ const BookSlotModel = ({ id, onClose }) => {
                         <Button
                             color="secondary"
                             onClick={handleBookSlot}
-                            className="tw-py-2 tw-px-4 tw-rounded-md"
+                            className="tw-py-2 tw-px-4 tw-rounded-md tw-bg-green-600"
                         >
-                            Book the slot
+                            Pay
                         </Button>
                     </div>
                 )}
@@ -198,6 +226,52 @@ const BookSlotModel = ({ id, onClose }) => {
                         <h3>{noSlotsMessage}</h3>
                     </div>
                 )}
+
+                {/* Fake payment modal */}
+                <Modal isOpen={showFakePaymentModal} toggle={() => setShowFakePaymentModal(false)}>
+                    <ModalBody>
+                        <p> Payment Successful!</p>
+                        {showCardDetailsForm && (
+                            <Form>
+                                <FormGroup>
+                                    <Label for="cardNumber">Card Number:</Label>
+                                    <Input
+                                        type="text"
+                                        name="cardNumber"
+                                        value={cardDetails.cardNumber}
+                                        onChange={handleCardDetailsChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="expiryDate">Expiry Date:</Label>
+                                    <Input
+                                        type="text"
+                                        name="expiryDate"
+                                        value={cardDetails.expiryDate}
+                                        onChange={handleCardDetailsChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="cvv">CVV:</Label>
+                                    <Input
+                                        type="text"
+                                        name="cvv"
+                                        value={cardDetails.cvv}
+                                        onChange={handleCardDetailsChange}
+                                    />
+                                </FormGroup>
+                            </Form>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        {!showCardDetailsForm && (
+                            <Button color="primary" onClick={() => setShowCardDetailsForm(true)}>Enter Card Details</Button>
+                        )}
+                        {showCardDetailsForm && (
+                            <Button color="primary" onClick={handleConfirmFakePayment}>Confirm Payment</Button>
+                        )}
+                    </ModalFooter>
+                </Modal>
             </div>
         </div>
     );

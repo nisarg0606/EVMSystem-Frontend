@@ -3,16 +3,17 @@ import { Button, Card, CardBody, FormGroup, Form, Input, InputGroup, InputGroupA
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import RegisterApi from "utils/RegisterApi.js";
-
+import { Link } from 'react-router-dom';
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState(""); // Added
+  const [lastName, setLastName] = useState(""); // Added
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -22,20 +23,30 @@ const Register = () => {
         username: username,
         email: email,
         password: password,
-        role: isAdmin ? "admin" : "" 
+        firstName: firstName,
+        lastName: lastName,
+        role: isAdmin ? "venueOwner/eventPlanner" : "customer"
       };
-
-      const data = await RegisterApi(userData);
-      console.log('User registered successfully:', data);
-      if(data.ok){
+  
+      const Response = await RegisterApi(userData);
+      if (Response) {
         setSuccess(true);
+        console.log(Response.message);
+      } else {
+        alert("Registration successful. You can now login.");
+        window.location.href = "/login";
       }
-    } catch (data) {
+    } catch (error) {
       console.error('Error occurred during registration:', error);
-      setError("Registration failed. ",data.message); 
     }
     setLoading(false);
   };
+  
+  {success && (
+    <div className="text-success text-center">
+      Registration successful. You can now <Link to="/page-login">login</Link>.
+    </div>
+  )}
 
   return (
     <>
@@ -59,6 +70,28 @@ const Register = () => {
                 <Card className="bg-secondary shadow border-0">
                   <CardBody className="px-lg-5 py-lg-5">
                     <Form onSubmit={handleRegister}>
+                      {/* First Name */}
+                      <FormGroup>
+                        <InputGroup className="input-group-alternative mb-3">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-single-02" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input placeholder="First Name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                        </InputGroup>
+                      </FormGroup>
+                      {/* Last Name */}
+                      <FormGroup>
+                        <InputGroup className="input-group-alternative mb-3">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="ni ni-single-02" />
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input placeholder="Last Name" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                        </InputGroup>
+                      </FormGroup>
                       <FormGroup>
                         <InputGroup className="input-group-alternative mb-3">
                           <InputGroupAddon addonType="prepend">
@@ -89,6 +122,7 @@ const Register = () => {
                           <Input placeholder="Password" type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
                         </InputGroup>
                       </FormGroup>
+
                       {/* Admin checkbox */}
                       <FormGroup check>
                         <Label check>
