@@ -186,17 +186,17 @@ const Profile = () => {
 
     try {
       // Check if the old password is correct
-      const userProfile = await GetUserProfile();
-      if (!userProfile || !userProfile.user || !userProfile.user.password) {
-        toast.error("Failed to verify old password. Please try again.");
-        return;
-      }
+      // const userProfile = await GetUserProfile();
+      // if (!userProfile || !userProfile.user || !userProfile.user.password) {
+      //   toast.error("Failed to verify old password. Please try again.");
+      //   return;
+      // }
 
-      // Check if the provided old password matches the stored password
-      if (oldPassword !== userProfile.user.password) {
-        toast.error("Incorrect old password. Please enter the correct old password.");
-        return;
-      }
+      // // Check if the provided old password matches the stored password
+      // if (oldPassword !== userProfile.user.password) {
+      //   toast.error("Incorrect old password. Please enter the correct old password.");
+      //   return;
+      // }
 
       // Proceed with resetting the password
       const response = await resetPassword(resetPasswordFormData);

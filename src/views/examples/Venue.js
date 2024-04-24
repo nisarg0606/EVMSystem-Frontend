@@ -75,8 +75,6 @@ const Venue = () => {
     });
   };
 
-
-
   const handleAddSlot = (dayIndex) => {
     const updatedTimings = [...venueData.timings];
     updatedTimings[dayIndex].slots.push(newSlot);
@@ -126,7 +124,7 @@ const Venue = () => {
   const handleSearchButtonClick = async () => {
     if (searchQuery.trim() !== '') {
       try {
-        const results = await fetchVenues(searchQuery, searchQuery);
+        const results = await fetchVenues(searchQuery);
         setSearchResults(Object.values(results.venues));
       } catch (error) {
         console.error("Error searching venues:", error.message);
@@ -205,9 +203,9 @@ const Venue = () => {
         </section>
 
         <section className="section">
-
-          <Container>
+          {loading ? (
             <div className="text-center">
+              <p>Loading...</p>
               <Spinner
                 color="primary"
                 style={{
@@ -219,92 +217,90 @@ const Venue = () => {
                 Loading...
               </Spinner>
             </div>
-
-            <Card className="card-profile shadow mt--300 rounded">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
-                <div className="tw-flex tw-justify-between -tw-items-center">
-                  {userRole !== 'customer' && (
-                    <>
-                      <Button onClick={handleCreateVenue} className="mr-2 tw-text-white">
-                        Create Venue
-                      </Button>
-                    </>
-                  )}
-                  <div className="tw-flex items-center">
-                    <Input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search by name or description"
-                      className="tw-mr-2 tw-w-64" 
-                    />
-                    <Button onClick={handleSearchButtonClick} className="mr-2 tw-text-white">
-                      Search
-                    </Button>
-                    {searchQuery && (
-                      <Button onClick={handleClearSearch} className="mr-2 tw-text-white">
-                        Clear
-                      </Button>
+          ) : (
+            <Container>
+              <Card className="card-profile shadow mt--300 rounded">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
+                  <div className="tw-flex tw-justify-between -tw-items-center">
+                    {userRole !== 'customer' && (
+                      <>
+                        <Button onClick={handleCreateVenue} className="mr-2 tw-text-white">
+                          Create Venue
+                        </Button>
+                      </>
                     )}
+                    <div className="tw-flex items-center">
+                      <Input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search by name or description"
+                        className="tw-mr-2 tw-w-64"
+                      />
+                      <Button onClick={handleSearchButtonClick} className="mr-2 tw-text-white">
+                        Search
+                      </Button>
+                      {searchQuery && (
+                        <Button onClick={handleClearSearch} className="mr-2 tw-text-white">
+                          Clear
+                        </Button>
+                      )}
+                    </div>
                   </div>
 
-                </div>
-
-                <h1 className='text-xl lg:text-2xl font-serif font-bold text-center text-white my-4'></h1>
-                {searchResults.length > 0 ? (
-                  searchResults.map(result => (
-                    <>
-
+                  <h1 className='text-xl lg:text-2xl font-serif font-bold text-center text-white my-4'></h1>
+                  {searchResults.length > 0 ? (
+                    searchResults.map(result => (
+                      <>
+                        <CardMain
+                          key={result._id}
+                          imageSrc={result.imageURL}
+                          title={result.name}
+                          capacity={`Capacity: ${result.capacity}, Location: ${result.location}, Type: ${result.type}, Price Per Hour: ${result.pricePerHour}`}
+                          availability={result.availability}
+                          description={`${result.description} Location: ${result.location} Capacity: ${result.capacity}`}
+                          location={`Location: ${result.location}`}
+                          // venueOwner={`Venue Owner: ${result.venueOwner.username}`}
+                          venueOwnerEmail={`Owner Email: ${result.venueOwner.email}`}
+                          cardType={'venue'}
+                          id={result._id}
+                        />
+                      </>
+                    ))
+                  ) : (
+                    currentVenues.map(venue => (
                       <CardMain
-                        key={result._id}
-                        imageSrc={result.imageURL}
-                        title={result.name}
-                        capacity={`Capacity: ${result.capacity}, Location: ${result.location}, Type: ${result.type}, Price Per Hour: ${result.pricePerHour}`}
-                        availability={result.availability}
-                        description={`${result.description} Location: ${result.location} Capacity: ${result.capacity}`}
-                        location={`Location: ${result.location}`}
-                        // venueOwner={`Venue Owner: ${result.venueOwner.username}`}
-                        venueOwnerEmail={`Owner Email: ${result.venueOwner.email}`}
+                        key={venue._id}
+                        imageSrc={venue.imageURL}
+                        title={venue.name}
+                        capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
+                        availability={venue.availability}
+                        description={`${venue.description} Location: ${venue.location} Capacity: ${venue.capacity}`}
+                        location={`Location: ${venue.location}`}
+                        // venueOwner={`Venue Owner: ${venue.venueOwner.username}`}
+                        venueOwnerEmail={`Owner Email: ${venue.venueOwner.email}`}
                         cardType={'venue'}
-                        id={result._id}
+                        id={venue._id}
                       />
-                    </>
-                  ))
-                ) : (
-                  currentVenues.map(venue => (
-                    <CardMain
-                      key={venue._id}
-                      imageSrc={venue.imageURL}
-                      title={venue.name}
-                      capacity={`Capacity: ${venue.capacity}, Location: ${venue.location}, Type: ${venue.type}, Price Per Hour: ${venue.pricePerHour}`}
-                      availability={venue.availability}
-                      description={`${venue.description} Location: ${venue.location} Capacity: ${venue.capacity}`}
-                      location={`Location: ${venue.location}`}
-                      // venueOwner={`Venue Owner: ${venue.venueOwner.username}`}
-                      venueOwnerEmail={`Owner Email: ${venue.venueOwner.email}`}
-                      cardType={'venue'}
-                      id={venue._id}
-                    />
-                  ))
-                )}
+                    ))
+                  )}
 
-              </div>
-            </Card>
+                </div>
+              </Card>
+              <nav className="mt-4">
+                <ul className="pagination justify-content-center">
+                  {[...Array(Math.ceil(venues.length / venuesPerPage)).keys()].map((number) => (
+                    <li key={number} className="page-item">
+                      <Button onClick={() => paginate(number + 1)} className="page-link">
+                        {number + 1}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
-            <nav className="mt-4">
-              <ul className="pagination justify-content-center">
-                {[...Array(Math.ceil(venues.length / venuesPerPage)).keys()].map((number) => (
-                  <li key={number} className="page-item">
-                    <Button onClick={() => paginate(number + 1)} className="page-link">
-                      {number + 1}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-          </Container>
-
+            </Container>
+          )}
         </section>
       </main>
       <SimpleFooter />
