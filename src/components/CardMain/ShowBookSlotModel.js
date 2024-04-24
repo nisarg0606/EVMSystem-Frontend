@@ -106,9 +106,11 @@ const BookSlotModel = ({ id, onClose }) => {
                 }
             } else {
                 console.log('Please select a date before submitting.');
+                toast.error('Please select a date before submitting.')
             }
         } catch (error) {
             console.log('Error booking slot:', error.message);
+            setNoSlotsMessage('No slots available');
         }
     };
 
@@ -301,7 +303,6 @@ const BookSlotModel = ({ id, onClose }) => {
                 <Modal isOpen={showFakePaymentModal} toggle={() => setShowFakePaymentModal(false)}>
                     <ModalBody>
                         <h1> Payment </h1>
-                        {/* Display total price */}
                         {showCardDetailsForm && (
                             <Form>
                                 <FormGroup>
