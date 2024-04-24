@@ -223,7 +223,7 @@ const Activity = () => {
                                             </Button>
 
                                         )}
-                                        <div className="tw-flex items-center "> 
+                                        <div className="tw-flex items-center ">
                                             <Input
                                                 type="text"
                                                 value={searchQuery}
@@ -297,9 +297,9 @@ const Activity = () => {
                                 </ul>
                             </nav>
                         </Container>
-                       
+
                     )}
-                    
+
                 </section>
                 <Modal isOpen={modal} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal}>Create Activity</ModalHeader>
@@ -308,7 +308,16 @@ const Activity = () => {
                             {modalLoading ? (
                                 <div className="text-center">
                                     <p>Loading...</p>
-                                    <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+                                    <Spinner
+                                        color="primary"
+                                        style={{
+                                            height: '3rem',
+                                            width: '3rem'
+                                        }}
+                                        type="grow"
+                                    >
+                                        Loading...
+                                    </Spinner>
                                 </div>
                             ) : (
                                 <Form onSubmit={handleSubmit}>
@@ -336,7 +345,7 @@ const Activity = () => {
                                     <Button onClick={handleClick}>Book venues</Button>
                                     <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                                         <DropdownToggle caret>
-                                            
+
                                             Select Venue
                                         </DropdownToggle>
                                         <DropdownMenu>
