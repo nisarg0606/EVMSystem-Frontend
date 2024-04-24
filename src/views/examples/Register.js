@@ -8,8 +8,8 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState(""); // Added
-  const [lastName, setLastName] = useState(""); // Added
+  const [firstName, setFirstName] = useState(""); 
+  const [lastName, setLastName] = useState(""); 
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

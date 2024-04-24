@@ -31,6 +31,7 @@ const BookSlotModel = ({ id, onClose }) => {
         cvv: ''
     });
     const [showCardDetailsForm, setShowCardDetailsForm] = useState(false);
+    const [price, setPrice] = useState(0); // State for holding the price
 
     useEffect(() => {
         const fetchBookingData = async () => {
@@ -46,6 +47,19 @@ const BookSlotModel = ({ id, onClose }) => {
 
         fetchBookingData();
     }, [id]);
+
+    useEffect(() => {
+        // Calculate price based on selected slots
+        const calculatePrice = () => {
+            const basePrice = 10; // Base price for one slot
+            const additionalPricePerSlot = 5; // Additional price per slot
+
+            const totalPrice = basePrice + additionalPricePerSlot * selectedSlots.length;
+            setPrice(totalPrice);
+        };
+
+        calculatePrice();
+    }, [selectedSlots]);
 
     const handleDateChange = (event) => {
         const selectedDate = new Date(event.target.value);
@@ -101,7 +115,7 @@ const BookSlotModel = ({ id, onClose }) => {
             if (selectedDateString && selectedSlots.length > 0) {
                 const response = await BookSlot(selectedDateString, selectedSlots, id);
                 alert('Booking successful:', response);
-                onClose(); 
+                onClose();
             } else {
                 console.log('Please select a date and at least one slot before booking.');
             }
@@ -110,7 +124,7 @@ const BookSlotModel = ({ id, onClose }) => {
         } finally {
             setLoading(false);
         }
-    
+
         try {
             setLoading(true);
             if (validateCardDetails(cardDetails)) {
@@ -159,8 +173,25 @@ const BookSlotModel = ({ id, onClose }) => {
     return (
         <div className="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-75 tw-z-50">
             <div className="tw-bg-white tw-p-6 tw-rounded-lg tw-shadow-lg tw-max-w-lg tw-w-full">
-                <h2 className="tw-text-lg tw-font-semibold tw-mb-4">Booking Details</h2>
-
+                <div className="tw-flex tw-justify-between tw-items-center"> {/* Flex container for heading and close icon */}
+                    <h2 className="tw-text-lg tw-font-semibold tw-mb-4">Booking Details</h2>
+                    <div onClick={onClose} className="tw-cursor-pointer"> {/* Close icon */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="tw-h-6 tw-w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </div>
+                </div>
                 <Form>
                     <FormGroup>
                         <Label for="datePicker">Select Date:</Label>
@@ -183,43 +214,39 @@ const BookSlotModel = ({ id, onClose }) => {
                         >
                             Submit
                         </Button>
-                        <Button
-                            color="secondary"
-                            onClick={onClose}
-                            className="tw-py-2 tw-px-4 tw-rounded-md"
-                        >
-                            Close
-                        </Button>
+
                     </div>
                 </Form>
 
                 {availableSlots.length > 0 && (
-                    <div className="tw-mt-4">
-                        <h3>Available Slots:</h3>
+                    <div className="mt-4">
+                        <h3 className="text-lg font-bold mb-2">Available Slots:</h3>
                         <ul>
                             {availableSlots.map((slot) => (
-                                <li key={slot._id}>
-                                    <Input
+                                <li key={slot._id} className="flex items-center mb-2">
+                                    <input
                                         type="checkbox"
                                         id={`slot-${slot._id}`}
                                         checked={selectedSlots.includes(`${slot.from} - ${slot.to}`)}
                                         onChange={() => handleCheckboxChange(slot.from, slot.to)}
+                                        className="form-checkbox h-4 w-4 text-green-600 mr-2"
                                     />
-                                    <Label for={`slot-${slot._id}`}>
+                                    <label htmlFor={`slot-${slot._id}`} className="text-sm text-gray-700">
                                         From {slot.from} to {slot.to}
-                                    </Label>
+                                    </label>
                                 </li>
                             ))}
                         </ul>
-                        <Button
-                            color="secondary"
+                        <p className="text-lg mt-4">Total Price: ${price}</p>
+                        <button
                             onClick={handleBookSlot}
-                            className="tw-py-2 tw-px-4 tw-rounded-md tw-bg-green-600"
+                            className="tw-py-2 tw-px-4 tw-rounded-md tw-bg-green-600 tw-text-white tw-mt-4 tw-inline-block tw-transition tw-duration-300 tw-ease-in-out tw-hover:bg-green-700"
                         >
                             Pay
-                        </Button>
+                        </button>
                     </div>
                 )}
+
 
                 {noSlotsMessage && (
                     <div className="tw-mt-4">
@@ -230,7 +257,8 @@ const BookSlotModel = ({ id, onClose }) => {
                 {/* Fake payment modal */}
                 <Modal isOpen={showFakePaymentModal} toggle={() => setShowFakePaymentModal(false)}>
                     <ModalBody>
-                        <p> Payment Successful!</p>
+                        <h1> Payment </h1>
+                        {/* Display total price */}
                         {showCardDetailsForm && (
                             <Form>
                                 <FormGroup>
@@ -261,17 +289,20 @@ const BookSlotModel = ({ id, onClose }) => {
                                     />
                                 </FormGroup>
                             </Form>
+
                         )}
                     </ModalBody>
+                    <h1>Total Price: ${price}</h1>
                     <ModalFooter>
                         {!showCardDetailsForm && (
-                            <Button color="primary" onClick={() => setShowCardDetailsForm(true)}>Enter Card Details</Button>
+                            <Button color="primary" className='tw-text-black' onClick={() => setShowCardDetailsForm(true)}>Enter Card Details</Button>
                         )}
                         {showCardDetailsForm && (
-                            <Button color="primary" onClick={handleConfirmFakePayment}>Confirm Payment</Button>
+                            <Button color="primary" className='tw-text-black' onClick={handleConfirmFakePayment}>Confirm Payment</Button>
                         )}
                     </ModalFooter>
                 </Modal>
+
             </div>
         </div>
     );
