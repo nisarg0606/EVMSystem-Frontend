@@ -24,9 +24,9 @@ import { Link } from "react-router-dom";
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter.js";
 import LoginApi from "../../utils/LoginApi.js";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { ReCAPTCHA } from "react-google-recaptcha";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ReCAPTCHA from "react-google-recaptcha";
 import Popup from "../../components/PopUpModel.js";
 
 const Login = () => {
@@ -55,16 +55,16 @@ const Login = () => {
       const response = await LoginApi({ email, password, code });
       if (response.message === "Invalid code") {
         setIs2FARequired(true);
-        showNotification('error', 'Invalid code');
+        showNotification("error", "Invalid code");
       } else {
         window.location.href = "/";
         setError("Login Success, Welcome...");
-        showNotification('success', response.message);
+        showNotification("success", response.message);
       }
     } catch (error) {
       setError("Login failed. Please check your credentials.");
-      showNotification('error', 'Login failed. Please check your credentials.');
-      console.log("login failed")
+      showNotification("error", "Login failed. Please check your credentials.");
+      console.log("login failed");
     }
   };
 
@@ -99,9 +99,25 @@ const Login = () => {
     }
   };
 
-  const handlePasswordReset = () => {
-  };
+  const handlePasswordReset = async () => {
+    const response = await fetch("http://localhost:5000/users/forgotpassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: resetPasswordEmail }),
+    });
 
+    if (!response.ok) {
+      throw new Error("Password reset failed. Please try again.");
+    }
+
+    const data = await response.json();
+    console.log("Password reset successful:", data);
+    alert("Password reset successful. Please check your email.");
+    setResetPasswordEmail("");
+    toggle();
+  };
 
   return (
     <>
@@ -117,10 +133,14 @@ const Login = () => {
             <span />
             <span />
             <span />
-
-          </div> 
+          </div>
           <div className="shape shape-style-1 bg-gradient-default">
-                        <iframe src='https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/' frameborder='0' width='100%' height='100%'></iframe>
+            <iframe
+              src="https://my.spline.design/3dtextbluecopy-395969798f2e0f678112143bc75ac6e0/"
+              frameborder="0"
+              width="100%"
+              height="100%"
+            ></iframe>
 
             {[...Array(8)].map((_, index) => (
               <span key={index} />
@@ -135,13 +155,12 @@ const Login = () => {
                       <small>Sign in with</small>
                     </div>
                     <div className="btn-wrapper text-center">
-
                       <GoogleLogin
                         clientId="YOUR_GOOGLE_CLIENT_ID"
                         buttonText="Login with Google"
                         onSuccess={handleGoogleLoginSuccess}
                         onFailure={handleGoogleLoginFailure}
-                        cookiePolicy={'single_host_origin'}
+                        cookiePolicy={"single_host_origin"}
                       />
                     </div>
                   </CardHeader>
@@ -236,11 +255,7 @@ const Login = () => {
                 </Card>
                 <Row className="mt-3">
                   <Col xs="6">
-                    <a
-                      className="text-light"
-                      href="#pablo"
-                      onClick={toggle}
-                    >
+                    <a className="text-light" href="#pablo" onClick={toggle}>
                       <small>Forgot password?</small>
                     </a>
                   </Col>
@@ -281,7 +296,11 @@ const Login = () => {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" className="tw-text-black" onClick={handlePasswordReset}>
+          <Button
+            color="primary"
+            className="tw-text-black"
+            onClick={handlePasswordReset}
+          >
             Reset Password
           </Button>{" "}
           <Button color="secondary" onClick={toggle}>
@@ -293,7 +312,6 @@ const Login = () => {
         sitekey="YOUR_RECAPTCHA_SITE_KEY"
         onChange={handleRecaptchaChange}
       />
-
     </>
   );
 };
