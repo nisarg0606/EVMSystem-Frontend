@@ -20,6 +20,9 @@ import {
 } from "reactstrap";
 
 import { loadStripe } from "@stripe/stripe-js";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 const BookSlotModel = ({ id, onClose }) => {
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -73,28 +76,20 @@ const BookSlotModel = ({ id, onClose }) => {
     calculatePrice();
   }, [selectedSlots, doublePrice, availableSlots]);
 
-  const handleDateChange = (e) => {
-    const selectedDate = new Date(e.target.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set hours to 0 for accurate comparison
-
-    // Check if selected date is today or a future date
-    if (selectedDate >= today) {
-      const year = selectedDate.getFullYear();
-      const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-      const day = String(selectedDate.getDate()).padStart(2, "0");
-
-      const formattedDate = `${year}-${month}-${day}`;
-      setSelectedDate(formattedDate);
-    } else {
-      // Notify user about invalid date selection
-      toast.error("Please select today or a future date.");
-    }
+  const state = {
+    startDate: new Date(),
+  };
+  const handleChange = (date) => {
+    setSelectedDate(date);
+    state.startDate = date;
   };
 
   const handleSubmit = async () => {
     try {
-      const date = selectedDate;
+      let date = moment(selectedDate).format("YYYY-MM-DD");
+      // i just need yyyy-mm-dd
+      date = date.split("T")[0];
+      console.log("date", date);
       if (date) {
         const bookedSlotData = await AvailabelSlot(id, date);
         console.log(bookedSlotData.availableSlots[0].price);
@@ -145,8 +140,10 @@ const BookSlotModel = ({ id, onClose }) => {
     const stripe = await loadStripe(
       "pk_test_51OyLXAG1gYMjrZo3DQVWWx9HImrkKGSsb8qO8xiCd3kUOEahrDA7AlgWY7cKTsrHEtZXMQSk49a7AY1qsXrfnFqw00LJN7elMY"
     );
+    let dateFormat = moment(selectedDate).format("YYYY-MM-DD");
+    dateFormat = dateFormat.split("T")[0];
     const body = {
-      date: selectedDate,
+      date: dateFormat,
       timeSlot: selectedSlots,
       price: price,
       venueId: id,
@@ -179,7 +176,7 @@ const BookSlotModel = ({ id, onClose }) => {
   const handleConfirmFakePayment = async () => {
     try {
       setLoading(true);
-      const selectedDateString = selectedDate;
+      const selectedDateString = moment(selectedDate).format("YYYY-MM-DD");
       if (selectedDateString && selectedSlots.length > 0) {
         const response = await BookSlot(selectedDateString, selectedSlots, id);
         onClose();
@@ -285,18 +282,22 @@ const BookSlotModel = ({ id, onClose }) => {
         </div>
         <Form>
           <FormGroup>
-            <Label for="datePicker">Select Date:</Label>
-            <input
+            <Label htmlFor="current-date">Select Date</Label>
+            {/*<input
               type="date"
               value={selectedDate}
               onChange={handleDateChange}
               className="tw-py-2 tw-px-4 tw-border tw-rounded-md tw-w-full"
+            />*/}
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleChange}
+              minDate={new Date()}
+              className="tw-py-2 tw-px-4 tw-border tw-rounded-md tw-w-full"
             />
           </FormGroup>
           {selectedDate && (
-            <h1>
-              Selected Date: {new Date(selectedDate).toLocaleDateString()}
-            </h1>
+            <h1>Selected Date: {moment(selectedDate).format("MM-DD-YYYY")}</h1>
           )}
           <div className="tw-flex tw-justify-between tw-mt-4">
             <Button

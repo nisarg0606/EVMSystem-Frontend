@@ -1,6 +1,5 @@
 const BASE_URL = "http://localhost:5000/";
-const token = localStorage.getItem('token');
-
+const token = localStorage.getItem("token");
 
 const AvailabelSlot = async (id, date) => {
   try {
@@ -10,7 +9,7 @@ const AvailabelSlot = async (id, date) => {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
