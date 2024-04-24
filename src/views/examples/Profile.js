@@ -23,6 +23,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import fun2fa from "../../utils/fun2fa";
 import Disable2fa from "../../utils/Disable2fa";
+import resetPassword from "utils/Profile/ResetPassword";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -36,7 +37,14 @@ const Profile = () => {
   const [allInterests] = useState(["Music", "Sports", "Travel"]);
   const [qrCodeData, setQrCodeData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isResetPasswordPopupOpen, setIsResetPasswordPopupOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [resetPasswordFormData, setResetPasswordFormData] = useState({
+    email: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   useEffect(() => {
     fetchUserProfile();
@@ -54,17 +62,17 @@ const Profile = () => {
   };
 
   const handleInputChange = (event) => {
-  const { name, value } = event.target;
+    const { name, value } = event.target;
 
-  if (name === "firstName") {
-    setFirstName(value);
-  } else if (name === "lastName") {
-    setLastName(value);
-  } else if (name === "interests") {
-    // Update interests state with a list of interests
-    setInterests(value);
-  }
-};
+    if (name === "firstName") {
+      setFirstName(value);
+    } else if (name === "lastName") {
+      setLastName(value);
+    } else if (name === "interests") {
+      // Update interests state with a list of interests
+      setInterests(value);
+    }
+  };
 
   const toggleInterest = (interest) => {
     if (interests.includes(interest)) {
@@ -81,9 +89,9 @@ const Profile = () => {
       // Use the interests state directly without splitting it into an array
       interestedIn: interests,
     };
-  
+
     try {
-     const response= await UpdateUserProfile(updatedProfileData);
+      const response = await UpdateUserProfile(updatedProfileData);
       toggleUpdateModal();
       fetchUserProfile();
       toast.success(response.message)
@@ -144,8 +152,75 @@ const Profile = () => {
     } catch (error) {
       setErrorMessage("Failed to enable 2FA. Code is incorrect.");
       setSuccessMessage("");
-      toast.error(error.message+" Code is incorrect.")
+      toast.error(error.message + " Code is incorrect.")
     }
+  };
+
+  const handleInputChangeResetPassword = (event) => {
+    const { name, value } = event.target;
+
+    setResetPasswordFormData({
+      ...resetPasswordFormData,
+      [name]: value,
+    });
+  };
+
+  const toggleResetPasswordPopup = () => {
+    setIsResetPasswordPopupOpen(!isResetPasswordPopupOpen);
+  };
+  const handleResetPasswordSubmit = async () => {
+    // Destructure the resetPasswordFormData object
+    const { email, oldPassword, newPassword, confirmPassword } = resetPasswordFormData;
+
+    // Check if any of the fields are empty
+    if (!email || !oldPassword || !newPassword || !confirmPassword) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    // Check if the new password matches the confirm password
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirm password do not match.");
+      return;
+    }
+
+    try {
+      // Check if the old password is correct
+      const userProfile = await GetUserProfile();
+      if (!userProfile || !userProfile.user || !userProfile.user.password) {
+        toast.error("Failed to verify old password. Please try again.");
+        return;
+      }
+
+      // Check if the provided old password matches the stored password
+      if (oldPassword !== userProfile.user.password) {
+        toast.error("Incorrect old password. Please enter the correct old password.");
+        return;
+      }
+
+      // Proceed with resetting the password
+      const response = await resetPassword(resetPasswordFormData);
+      if (response && response.ok) {
+        // If reset password is successful, show success message and log out user
+        toast.success("Password reset successful. You have been logged out.");
+        logoutUser();
+      } else {
+        // If reset password fails (response.ok is false), show error message
+        toast.error("Failed to reset password. Please try again.");
+      }
+      // Close the reset password popup after submission
+      toggleResetPasswordPopup();
+    } catch (error) {
+      // If an error occurs during the API call, show error message
+      console.error("Error resetting password:", error.message);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+
+
+  const logoutUser = () => {
+    localStorage.clear();
+    window.location.href = '/login-page'
   };
 
   return (
@@ -185,6 +260,7 @@ const Profile = () => {
                 >
                   Update Profile
                 </Button>
+
                 {user?.twoFactorAuthEnabled ? (
                   <Button
                     className="tw-absolute ml-3 tw-top-0 mt-3 mr-3 tw-bg-red-500 tw-text-white px-4 py-2 rounded-lg"
@@ -225,7 +301,16 @@ const Profile = () => {
                     <br />
                     <br />
                     {loading ? (
-                      <Spinner color="primary" style={{ width: "3rem", height: "3rem" }} />
+                      <Spinner
+                        color="primary"
+                        style={{
+                          height: '3rem',
+                          width: '3rem'
+                        }}
+                        type="grow"
+                      >
+                        Loading...
+                      </Spinner>
                     ) : (
                       <>
                         {user?.verified ? (
@@ -237,9 +322,9 @@ const Profile = () => {
                             Not Verified
                           </span>
                         )}
-                          <div>
-                            <h3>{`${user.firstName} ${user.lastName}`}</h3>
-                          </div>
+                        <div>
+                          <h3>{`${user.firstName} ${user.lastName}`}</h3>
+                        </div>
                         <h3>{user?.username}</h3>
                         <p>Email: {user?.email}</p>
                         <p>Role: {user?.role}</p>
@@ -255,6 +340,10 @@ const Profile = () => {
                         )}
                       </>
                     )}
+                    <br></br>
+                    <Button className="tw-bg-blue-500 tw-text-white" onClick={toggleResetPasswordPopup}>
+                      Reset Password
+                    </Button>
                   </div>
                 </Card>
                 <br></br>
@@ -296,7 +385,7 @@ const Profile = () => {
               type="text"
               name="interests"
               id="interests"
-              value={interests}  
+              value={interests}
               onChange={handleInputChange}
             />
           </FormGroup>
@@ -354,7 +443,62 @@ const Profile = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      <ToastContainer/>
+      <ToastContainer />
+
+      {/* Reset Password Popup */}
+      <Modal isOpen={isResetPasswordPopupOpen} toggle={toggleResetPasswordPopup}>
+        <ModalHeader toggle={toggleResetPasswordPopup}>Reset Password</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Label for="email">Email</Label>
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              value={resetPasswordFormData.email}
+              onChange={handleInputChangeResetPassword}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="oldPassword">Old Password</Label>
+            <Input
+              type="password"
+              name="oldPassword"
+              id="oldPassword"
+              value={resetPasswordFormData.oldPassword}
+              onChange={handleInputChangeResetPassword}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="newPassword">New Password</Label>
+            <Input
+              type="password"
+              name="newPassword"
+              id="newPassword"
+              value={resetPasswordFormData.newPassword}
+              onChange={handleInputChangeResetPassword}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="confirmPassword">Confirm Password</Label>
+            <Input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              value={resetPasswordFormData.confirmPassword}
+              onChange={handleInputChangeResetPassword}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" className="tw-text-black" onClick={handleResetPasswordSubmit}>
+            Submit
+          </Button>{" "}
+          <Button color="secondary" onClick={toggleResetPasswordPopup}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }

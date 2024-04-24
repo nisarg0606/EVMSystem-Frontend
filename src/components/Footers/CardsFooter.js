@@ -57,7 +57,16 @@ const CardsFooter = () => {
       {loading ? (
         <div className="text-center">
           <p>Loading...</p>
-          <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+          <Spinner
+            color="primary"
+            style={{
+              height: '3rem',
+              width: '3rem'
+            }}
+            type="grow"
+          >
+            Loading...
+          </Spinner>
         </div>
       ) : (
         <Container className="container-lg section-hero section-shaped">

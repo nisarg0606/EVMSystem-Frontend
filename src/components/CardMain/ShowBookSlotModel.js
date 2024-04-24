@@ -73,7 +73,7 @@ const BookSlotModel = ({ id, onClose }) => {
 
     const handleCheckboxChange = (from, to) => {
         const slotDate = `${from} - ${to}`;
-        
+
         setSelectedSlots((prevSelectedSlots) => {
             if (prevSelectedSlots.includes(slotDate)) {
                 // If the date is already selected, remove it from the array
@@ -89,7 +89,7 @@ const BookSlotModel = ({ id, onClose }) => {
         try {
             // Get the selected date in the format YYYY-MM-DD
             const selectedDateString = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
-    
+
             // Make sure the selected date and slots are not empty
             if (selectedDateString && selectedSlots.length > 0) {
                 // Call BookSlot function with selected date, selected slots, and ID
@@ -104,12 +104,21 @@ const BookSlotModel = ({ id, onClose }) => {
             console.log('Error booking slots:', error.message);
         }
     };
-    
+
     if (loading) {
         return (
             <div className="text-center">
                 <p>Loading...</p>
-                <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
+                <Spinner
+                    color="primary"
+                    style={{
+                        height: '3rem',
+                        width: '3rem'
+                    }}
+                    type="grow"
+                >
+                    Loading...
+                </Spinner>
             </div>
         );
     }

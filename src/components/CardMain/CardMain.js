@@ -11,7 +11,7 @@ import BookingModal from '../../components/CardMain/ShowBookingModel.js';
 import BookSlotModel from './ShowBookSlotModel.js';
 import BookActivityModel from './ShowBookingActivityModel.js';
 
-const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, price, start_time,end_time, status }) => {
+const CardMain = ({ id, imageSrc, title, description, Capacity, availability, activityType, location, venueOwner, venueOwnerEmail, cardType, date, price, start_time, end_time, status }) => {
   const [expanded, setExpanded] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -84,29 +84,30 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
     localStorage.removeItem('activityID');
   };
 
-  const handleDelete = async (id, isVenue) => {
-    try {
-      let response;
-      if (isVenue) {
-        response = await DeleteVenue(id);
-        console.log("Venue Deleted");
-        toast.success("Venue deleted successfully");
-      } else {
-        response = await DeleteActivity(id);
-        console.log("Activity Deleted");
-        toast.success("Activity deleted successfully");
-      }
-      window.location.reload();
-    } catch (error) {
-      if (isVenue) {
-        console.log("Venue Deleting failed.");
-        toast.error("Failed to delete venue: " + error.message);
-      } else {
-        console.log("DeleteActivity Deleting failed.");
-        toast.error("Failed to delete activity: " + error.message);
-      }
+  
+const handleDelete = async (id, isVenue) => {
+  try {
+    let response;
+    if (isVenue) {
+      response = await DeleteVenue(id);
+      console.log("Venue Deleted");
+      toast.success("Venue deleted successfully");
+    } else {
+      response = await DeleteActivity(id);
+      console.log("Activity Deleted");
+      toast.success("Activity deleted successfully");
+    }
+    window.location.reload();
+  } catch (error) {
+    if (isVenue) {
+      console.log("Venue Deleting failed.");
+      toast.error("Failed to delete venue: " + error.message);
+    } else {
+      console.log("DeleteActivity Deleting failed.");
+      toast.error("Failed to delete activity: " + error.message);
     }
   }
+}
 
   const initialValues = {
     name: title,
@@ -140,7 +141,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
             <div className="tw-flex tw-justify-between tw-items-center">
               <h5 className="tw-mb-2 tw-text-lg tw-font-semibold tw-tracking-tight tw-text-gray-900 dark:text-white">{title}</h5>
               <div className="tw-flex tw-justify-between tw-items-center">
-                {cardType === 'venue' && (
+                {cardType === 'venue' &&  (
                   <>
                     {userRole !== 'customer' && (
                       <>
@@ -154,6 +155,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                     )}
                   </>
                 )}
+
                 {cardType === 'venue' && (
                   <Button
                     onClick={() => handleBookSlot(id, 'venue')}
@@ -161,6 +163,8 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                     Book slot
                   </Button>
                 )}
+
+
                 {userRole === 'customer' && (
                   <>
                     {cardType === 'activity' && (
@@ -237,7 +241,7 @@ const CardMain = ({ id, imageSrc, title, description, Capacity, availability, ac
                 {start_time}
               </div>
             )}
-             {expanded && end_time && (
+            {expanded && end_time && (
               <div className="tw-text-sm tw-text-gray-700 dark:text-gray-400">
                 {end_time}
               </div>

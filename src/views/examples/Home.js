@@ -3,18 +3,6 @@ import {
     Card,
     Container,
     Spinner,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    DropdownToggle,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem
 } from 'reactstrap';
 import CardMain from 'components/CardMain/CardMain';
 import DemoNavbar from 'components/Navbars/DemoNavbar';
@@ -25,11 +13,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GetMyActivities from '../../utils/MyActivities.js';
 import GetUpCommingActivites from 'utils/getUpCommingActivities.js';
-import HostDashboard from 'components/HostDashboardView.js';
+import HostDashboardView from 'components/HostDashboardView.js';
+import CustomerDashboardView from 'components/CustomerDashboardView.js';
 
 const Home = () => {
-    const [loading, setLoading] = useState(false);
-
+    const userType = localStorage.getItem('role')
 
     return (
         <>
@@ -63,22 +51,19 @@ const Home = () => {
                 </section>
 
                 <section className="section">
-                    {loading ? (
-                        <div className="text-center">
-                            <p>Loading...</p>
-                            <Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />
-                        </div>
-                    ) : (
-                        <Container>
-                            <Card className="card-profile shadow mt--300 tw-bg-red" >
-                            <HostDashboard/>
 
-                           </Card>
-                        </Container>
-                    )}
+                    <Container>
+                            {userType !== 'customer' && (
+                                <HostDashboardView />
+                            )}
+                            {userType === 'customer' && (
+
+                                <CustomerDashboardView />
+                            )}
+
+                    </Container>
+
                 </section>
-                
-
                 <SimpleFooter />
                 <ToastContainer />
 
