@@ -1,16 +1,16 @@
 const BASE_URL = "http://localhost:5000/";
 const token = localStorage.getItem('token');
 
-const BookSlot = async (selectedDate, selectedTimeSlots, id) => {
+const BookActivity = async (bookingQuantity, id) => {
     try {
       console.log("id",id)
         const requestBody = {
-            date: selectedDate, 
-            timeSlot: selectedTimeSlots 
+            activityId: id, 
+            bookingQuantity: bookingQuantity 
         };
 
         // Send the POST request to the API endpoint
-        const response = await fetch(`${BASE_URL}venueBookings/${id}`, {
+        const response = await fetch(`${BASE_URL}activityBookings/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -41,4 +41,4 @@ const BookSlot = async (selectedDate, selectedTimeSlots, id) => {
     }
 };
 
-export default BookSlot;
+export default BookActivity;

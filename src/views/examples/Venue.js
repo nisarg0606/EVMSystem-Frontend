@@ -215,9 +215,12 @@ const Venue = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue p-4">
                   <div className="tw-flex tw-justify-between -tw-items-center">
                   {userRole !== 'customer' && (
+                    <>
                     <Button onClick={handleCreateVenue} className="mr-2 tw-text-white">
                       Create Venue
                     </Button>
+                  
+                    </>
                   )}
                     <div className="tw-flex items-center">
                       <Input
@@ -235,6 +238,7 @@ const Venue = () => {
                           Clear
                         </Button>
                       )}
+                      
                     </div>
                   </div>
 
