@@ -49,6 +49,7 @@ const CardMain = ({
     { name: "name", label: "Title" },
     { name: "description", label: "Description" },
     { name: "location", label: "location" },
+    { name: "availability", label: "Availability" },
   ];
 
   const handleEdit = async (id, type) => {
@@ -151,6 +152,7 @@ const CardMain = ({
     name: title,
     description: description,
     location: location,
+    availability: availability,
     id: venueId,
   };
 

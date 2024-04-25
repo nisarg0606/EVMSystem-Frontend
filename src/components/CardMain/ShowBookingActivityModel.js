@@ -101,7 +101,6 @@ const BookActivityModel = ({ id, onClose, InitialPrice }) => {
           </div>
         </Form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

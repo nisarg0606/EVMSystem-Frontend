@@ -15,10 +15,12 @@ const BookActivity = async (bookingQuantity, id, price, phone) => {
     };
 
     console.log("requestBody", requestBody);
-    const stripe = await loadStripe(REACT_APP_SITE_KEY);
+    const stripe = await loadStripe(
+      "pk_test_51OyLXAG1gYMjrZo3DQVWWx9HImrkKGSsb8qO8xiCd3kUOEahrDA7AlgWY7cKTsrHEtZXMQSk49a7AY1qsXrfnFqw00LJN7elMY"
+    );
 
     // Send the POST request to the API endpoint
-    const response = await fetch(`${REACT_APP_BACKEND_URL}activityBookings/`, {
+    const response = await fetch(`${REACT_APP_BACKEND_URL}/activityBookings/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
